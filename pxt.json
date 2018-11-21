@@ -1,0 +1,21 @@
+{
+    "name": "qdee",
+    "version": "0.0.1",
+    "description": "Blocks for LewanSoul Qdee",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts",
+        "QdeeRGBLight.ts",
+        "sendbuffer.asm",
+        "_locales/zh/qdee-strings.json",
+        "_locales/zh/qdee-jsdoc-strings.json"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": true
+}
