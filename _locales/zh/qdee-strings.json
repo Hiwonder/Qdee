@@ -16,6 +16,7 @@
 	"qdee.extAddress.adress_10|block":"地址10",
 	"qdee.onQdee_custom_ir_pressed|block":"当红外接收到自定义码|地址%address|码值%code|时",
 	"qdee.onQdee_remote_ir_pressed|block":"当红外接收到遥控器码|%code|时",
+	"qdee.qdee_setBusServoNum|block":"设置总线舵机|编号 %port|",
 	"QdeeLights.Light1|block":"彩灯1",
 	"QdeeLights.Light2|block":"彩灯2",
 	"QdeeLights.Light3|block":"彩灯3",

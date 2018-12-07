@@ -1,6 +1,6 @@
 # qdee
 
-Blocks for LewanSoul Qdee
+Blocks for Hiwonder Qdee
 
 ## License
 
@@ -12,6 +12,6 @@ MIT
 (The metadata above is needed for package search.)
 
 ```package
-qdee=github:LewanSoul2018/Qdee
+qdee=github:Hiwonder/Qdee
 ```
 

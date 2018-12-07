@@ -1,7 +1,7 @@
 {
     "name": "qdee",
     "version": "0.0.1",
-    "description": "Blocks for LewanSoul Qdee",
+    "description": "Blocks for Hiwonder Qdee",
     "license": "MIT",
     "dependencies": {
         "core": "*"

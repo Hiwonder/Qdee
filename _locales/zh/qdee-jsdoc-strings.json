@@ -38,5 +38,6 @@
 	"qdee.qdee_send_getMac":"发送配对请求",
 	"qdee.onQdee_getMac":"当收到设备ID时触发",
 	"qdee.qdee_getMacAddress":"获取到设备ID字符串，与蓝牙发送结合起来使用",
-	"qdee.qdee_readAngle":"Microbit向单片机发送查询单片机指令"
+	"qdee.qdee_readAngle":"Microbit向单片机发送查询单片机指令",
+	"qdee.qdee_setBusServoNum":"发送指令来设置当前连接的总线舵机的编号"
 }
