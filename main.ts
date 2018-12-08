@@ -70,10 +70,17 @@
         //% block="Port 1"
         port1 = 0x01,
         //% block="Port 2"
-        port2 = 0x02,    
+        port2 = 0x02
+     }
+     
+     export enum lightbeltPort {
+        //% block="Port 1"
+        port1 = 0x01,
+        //% block="Port 2"
+        port2 = 0x02,
         //% block="Port 3"
         port3 = 0x03
-    }
+     }
 
     export enum busServoPort {
         //% block="Port 10"
@@ -1408,9 +1415,6 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
             case ultrasonicPort.port2:
                 trigPin = DigitalPin.P13;
                 break;
-            case ultrasonicPort.port3:
-                trigPin = DigitalPin.P16;
-                break;
         }
         pins.setPull(trigPin, PinPullMode.PullNone);
         pins.digitalWritePin(trigPin, 0);
@@ -1527,20 +1531,20 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
 	 * Initialize Light belt
 	 */
     //% weight=70 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
-    export function qdee_belt_initRGBLight(port: ultrasonicPort) {
+    export function qdee_belt_initRGBLight(port: lightbeltPort) {
         switch (port)
         {
-            case ultrasonicPort.port1:
+            case lightbeltPort.port1:
                 if (!lhRGBLightBelt) {
                     lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P1, 30, QdeeRGBPixelMode.RGB);
                 }
                 break;
-            case ultrasonicPort.port2:
+            case lightbeltPort.port2:
                 if (!lhRGBLightBelt) {
                     lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P13, 30, QdeeRGBPixelMode.RGB);
                 }
                 break;
-            case ultrasonicPort.port3:
+            case lightbeltPort.port3:
                 if (!lhRGBLightBelt) {
                     lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P16, 30, QdeeRGBPixelMode.RGB);
                 }
