@@ -1419,13 +1419,14 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         control.waitMicros(10);
         pins.digitalWritePin(trigPin, 0);
 
-        let d = pins.pulseIn(trigPin, PulseValue.High, 25000);
+        let d = pins.pulseIn(trigPin, PulseValue.High, 15000);
         let distance = d;
         // filter timeout spikes
-        if (distance == 0 && distanceBak!= 0){
+        if (distance == 0 || distance >= 13920){
             distance = distanceBak;
         }
-        distanceBak = d;
+        else
+            distanceBak = d;
         return distance * 10 /6 /58;
   }
   
