@@ -1431,7 +1431,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         }
         else
             distanceBak = d;
-        return distance * 10 /6 /58;
+        return Math.round(distance * 10 / 6 / 58);
   }
   
 /**
