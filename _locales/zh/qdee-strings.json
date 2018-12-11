@@ -169,5 +169,6 @@
 	"qdee.qdee_show_expressions|block":"Qdee显示表情 %type",
 	"qdee.qdee_playTone|block":"Qdee播放音调|%tone|,|%rhythm 拍",
 	"qdee.qdee_belt_setPixelRGBIndex|block":"设置灯带|%lightoffset|段颜色为 %rgb",
-	"qdee.qdee_send_remote_phone_data|block":"Qdee发送手机遥控码 %data"
+	"qdee.qdee_send_remote_phone_data|block":"Qdee发送手机遥控码 %data",
+	"qdee.qdee_belt_setPixelRGBSingle|block":"设置灯带灯索引(0~29)|%lightoffset|颜色 %rgb"
 }

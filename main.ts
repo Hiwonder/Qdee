@@ -1566,7 +1566,17 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
-    //% weight=68 blockId=qdee_belt_setPixelRGBIndex block="Set light belt|%lightoffset|color to %rgb"
+    //% weight=68 blockId=qdee_belt_setPixelRGBSingle block="Set light belt index(0~29)|%lightoffset|color to %rgb"
+    //% lightoffset.min=0  lightoffset.max=29 
+    export function qdee_belt_setPixelRGBSingle(lightoffset: number, rgb: QdeeRGBColors)
+    { 
+        lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
+    }
+     
+    /**
+     * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
+     */
+    //% weight=67 blockId=qdee_belt_setPixelRGBIndex block="Set light belt|%lightoffset|color to %rgb"
     export function qdee_belt_setPixelRGBIndex(lightoffset: QdeeLightsBelt, rgb: number)
     { 
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
@@ -1575,7 +1585,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
      */
-    //% weight=67 blockId=qdee_belt_showLight block="Show light belt"
+    //% weight=66 blockId=qdee_belt_showLight block="Show light belt"
     export function qdee_belt_showLight() {
         lhRGBLightBelt.show();
     }
@@ -1583,7 +1593,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Clear the color of the colored lights and turn off the lights.
      */
-    //% weight=66 blockGap=50 blockId=qdee_belt_clearLight block="Clear light belt"
+    //% weight=65 blockGap=50 blockId=qdee_belt_clearLight block="Clear light belt"
     export function qdee_belt_clearLight() {
         lhRGBLightBelt.clear();
     }
@@ -1595,7 +1605,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      /**
      * Resolve the Bluetooth that phone APP send command type, the total of nine types of commands: tank display command, servo debug command, obtaining the distance of ultrasonic command, obtaining temperature command, obtain sound size rank orders, to obtain the light level command, set the color lights command, honking command, firmware version information command.
      */
-    //% weight=65 blockId=qdee_analyzeBluetoothCmd block="Get bluetooth command type %str"
+    //% weight=64 blockId=qdee_analyzeBluetoothCmd block="Get bluetooth command type %str"
     export function qdee_analyzeBluetoothCmd(str: string): number {
         if (str.length > 6) {
             let cmdHead = str.substr(0, 3);
@@ -1622,7 +1632,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      * Resolve the parameters that the phone APP send the command,there are 3 parameters of servo debug command,the other command has just one parameter.
     * @param index number of the learn code in 1-3. eg: 1
      */
-    //% weight=64  blockId=qdee_getArgs block="Get bluetooth command|%str|argument at %index"
+    //% weight=63  blockId=qdee_getArgs block="Get bluetooth command|%str|argument at %index"
     //% index.min=1 index.max=3
     export function qdee_getArgs(str: string, index: number): number {
         let cmdType = qdee_analyzeBluetoothCmd(str);
@@ -1665,7 +1675,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Returns the enumeration of the command type, which can be compared with this module after obtaining the bluetooth command type sent by the mobile phone APP.
      */
-    //% weight=63 blockId=qdee_getBluetoothCmdtype block="Bluetooth command type %type"
+    //% weight=62 blockId=qdee_getBluetoothCmdtype block="Bluetooth command type %type"
     export function qdee_getBluetoothCmdtype(type: QdeeCmdType): number {
         return type;
     }
@@ -1673,7 +1683,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * The command type of the tank is stop, go ahead, back, turn left, turn right, slow down, turn left slowly, turn right slowly.
      */
-    //% weight=62 blockId=qdee_getRunCarType block="Car run type %type"
+    //% weight=61 blockId=qdee_getRunCarType block="Car run type %type"
     export function qdee_getRunCarType(type: QdeeCarRunCmdType): number {
         return type;
     }
@@ -1681,7 +1691,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
     * Set the Qdee show facial expressions
     */
-    //% weight=61 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
+    //% weight=60 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
     export function qdee_show_expressions(type: number) {
         switch (type)
         {
@@ -1765,7 +1775,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Set Qdee play tone
      */
-    //% weight=60 blockId=qdee_playTone block="Qdee play |tone %tone|and beats %rhythm"
+    //% weight=59 blockId=qdee_playTone block="Qdee play |tone %tone|and beats %rhythm"
     export function qdee_playTone(tone: number, rhythm: number) {
         let toneNum: number = 0;
         let beat: number;
@@ -1834,7 +1844,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * The distance from the ultrasonic obstacle to the standard command, which is sent to the mobile phone. The APP will indicate the distance of the ultrasonic obstacle.
      */
-    //% weight=59 blockId=qdee_convertUltrasonic block="Convert ultrasonic distance %data"
+    //% weight=58 blockId=qdee_convertUltrasonic block="Convert ultrasonic distance %data"
     export function qdee_convertUltrasonic(data: number): string {
         let cmdStr: string = "CMD|03|";
         cmdStr += data.toString();
@@ -1844,7 +1854,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * The conversion temperature value to standard command, sent to the mobile phone, and the APP displays the current temperature.
      */
-    //% weight=58 blockId=qdee_convertTemperature block="Convert temperature %data"
+    //% weight=57 blockId=qdee_convertTemperature block="Convert temperature %data"
     export function qdee_convertTemperature(data: number): string {
         let cmdStr: string = "CMD|04|";
         cmdStr += data.toString();
@@ -1855,7 +1865,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Convert the sound value to the standard command and send it to the mobile phone. (0~255).
      */
-    //% weight=57 blockId=qdee_convertLight block="Convert sound %data"
+    //% weight=56 blockId=qdee_convertLight block="Convert sound %data"
     export function qdee_convertSound(data: number): string {
         let cmdStr: string = "CMD|05|";
         cmdStr += data.toString();
@@ -1866,7 +1876,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Convert the light value to the standard command and send it to the mobile phone. The APP displays the current light level (0~255).
      */
-    //% weight=56 blockId=qdee_convertLight block="Convert light %data"
+    //% weight=55 blockId=qdee_convertLight block="Convert light %data"
     export function qdee_convertLight(data: number): string {
         let cmdStr: string = "CMD|06|";
         cmdStr += data.toString();
@@ -1877,7 +1887,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Convert the battery value to the standard command and send it to the mobile phone. The APP displays the current voltage.
      */
-    //% weight=55 blockId=qdee_convertBattery blockGap=50 block="Convert battery %data"
+    //% weight=54 blockId=qdee_convertBattery blockGap=50 block="Convert battery %data"
     export function qdee_convertBattery(data: number): string {
         let cmdStr: string = "CMD|07|";
         cmdStr += data.toString();
@@ -1889,7 +1899,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Connect to the wifi
      */
-    //% weight=54 blockId=qdee_connectWifi block="Connect to the Wifi,name|%ssid|and password %passwrd"
+    //% weight=53 blockId=qdee_connectWifi block="Connect to the Wifi,name|%ssid|and password %passwrd"
     export function qdee_connectWifi(ssid: string, passwrd: string)
     {
         let buf = pins.createBuffer(ssid.length + passwrd.length + 10);
@@ -1917,7 +1927,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Detect the device connect status
      */
-    //% weight=53 blockId=qdee_isConnectedServer block="Device is connected to server?"
+    //% weight=52 blockId=qdee_isConnectedServer block="Device is connected to server?"
     export function qdee_isConnectedServer(): boolean
     {
         return connectStatus;
@@ -1926,7 +1936,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Send get mac address command
      */
-    //% weight=52 blockId=qdee_send_getMac block="Send pair command"
+    //% weight=51 blockId=qdee_send_getMac block="Send pair command"
     export function qdee_send_getMac()
     {
         let buf = pins.createBuffer(5);
@@ -1942,7 +1952,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      * Do someting when Qdee receive mac adress
      * @param body code to run when event is raised
      */
-    //% weight=51 blockId=onQdee_getMac block="On Qdee get device id"
+    //% weight=50 blockId=onQdee_getMac block="On Qdee get device id"
     export function onQdee_getMac(body: Action) {
         control.onEvent(MESSAGE_MAC,1,body);
     }
@@ -1950,7 +1960,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Get device mac address
      */
-    //% weight=50 blockId=qdee_getMacAddress block="Get device id"
+    //% weight=49 blockId=qdee_getMacAddress block="Get device id"
     export function qdee_getMacAddress(): string
     {
         return macStr + "$";
@@ -1959,7 +1969,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Send sofa status
      */
-    //% weight=49 blockId=qdee_sendSofa block="Send sofa command %sofa"
+    //% weight=48 blockId=qdee_sendSofa block="Send sofa command %sofa"
     export function qdee_sendSofa(sofa: SofaStatus)
     {
         let buf = pins.createBuffer(14);

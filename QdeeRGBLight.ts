@@ -127,6 +127,10 @@ namespace QdeeRGBLight {
             
         }
 
+        singleSetBeltPixelColor(pixeloffset: number, rgb: QdeeRGBColors): void {
+            this.setPixelRGB(pixeloffset, rgb);
+        }
+
         setPixelColor(pixeloffset: number, rgb: QdeeRGBColors): void {
             if (pixeloffset == this._length)//全部
             {
