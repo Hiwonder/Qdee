@@ -39,5 +39,7 @@
 	"qdee.onQdee_getMac":"当收到设备ID时触发",
 	"qdee.qdee_getMacAddress":"获取到设备ID字符串，与蓝牙发送结合起来使用",
 	"qdee.qdee_readAngle":"Microbit向单片机发送查询单片机指令",
-	"qdee.qdee_setBusServoNum":"发送指令来设置当前连接的总线舵机的编号"
+	"qdee.qdee_setBusServoNum":"发送指令来设置当前连接的总线舵机的编号",
+	"qdee.qdee_belt_setPixelRGBSingle":"设置灯带30个灯的颜色，灯编号参数范围为0到29",
+	"qdee.qdee_belt_setPixelRGBSingleRGBIndex":"设置灯带30个灯的颜色，灯编号参数范围为0到29，颜色编号范围为1到9"
 }
