@@ -1433,32 +1433,72 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
    * Get the distance of ultrasonic detection to the obstacle 
    */  
 //% weight=77 blockId=qdee_ultrasonic  block="Ultrasonic|port %port|distance(cm)"
-    export function qdee_ultrasonic(port: ultrasonicPort): number {
-        let trigPin: DigitalPin = DigitalPin.P1;
-        switch (port)
-        {
-            case ultrasonicPort.port1:
-                trigPin = DigitalPin.P1;
-                break;
-            case ultrasonicPort.port2:
-                trigPin = DigitalPin.P13;
-                break;
-        }
-        pins.setPull(trigPin, PinPullMode.PullNone);
-        pins.digitalWritePin(trigPin, 0);
-        control.waitMicros(2);
-        pins.digitalWritePin(trigPin, 1);
-        control.waitMicros(10);
-        pins.digitalWritePin(trigPin, 0);
+     export function qdee_ultrasonic(port: ultrasonicPort): number {
+         let trigPin: DigitalPin = DigitalPin.P1;
+         let echoPin: DigitalPin = DigitalPin.P2;
+         let distance: number = 0;
+         let d: number = 0;
+         if (versionNum == -1)//没有读取到版本号
+         {
+            switch (port)
+            {
+                case ultrasonicPort.port1:
+                    trigPin = DigitalPin.P1;
+                    break;
+                case ultrasonicPort.port2:
+                    trigPin = DigitalPin.P13;
+                    break;
+            }
+            pins.setPull(trigPin, PinPullMode.PullNone);
+            pins.digitalWritePin(trigPin, 0);
+            control.waitMicros(2);
+            pins.digitalWritePin(trigPin, 1);
+            control.waitMicros(10);
+            pins.digitalWritePin(trigPin, 0);
+    
+            d = pins.pulseIn(trigPin, PulseValue.High, 15000);
+            distance = d;
+            // filter timeout spikes
+            if (distance == 0 || distance >= 13920){
+                distance = distanceBak;
+            }
+            else
+                distanceBak = d;
+             
+         }
+         else
+         {
+            switch (port)
+            {
+                case ultrasonicPort.port1:
+                    trigPin = DigitalPin.P1;
+                    echoPin = DigitalPin.P2;
+                    break;
+                case ultrasonicPort.port2:
+                    trigPin = DigitalPin.P13;
+                    echoPin = DigitalPin.P14;
+                    break;
+            }
+            pins.setPull(echoPin, PinPullMode.PullNone);
+            pins.setPull(trigPin, PinPullMode.PullNone);
+                    
+            // send pulse
+            pins.digitalWritePin(trigPin, 0);
+            control.waitMicros(2);
+            pins.digitalWritePin(trigPin, 1);
+            control.waitMicros(10);
+            pins.digitalWritePin(trigPin, 0);
+            // read pulse
+             d = pins.pulseIn(echoPin, PulseValue.High, 15000);
+             distance = d;
+            // filter timeout spikes
+            if (distance == 0 || distance >= 13920){
+                distance = distanceBak;
+            }
+            else
+                distanceBak = d;
+          }   
 
-        let d = pins.pulseIn(trigPin, PulseValue.High, 15000);
-        let distance = d;
-        // filter timeout spikes
-        if (distance == 0 || distance >= 13920){
-            distance = distanceBak;
-        }
-        else
-            distanceBak = d;
         return Math.round(distance * 10 / 6 / 58);
   }
   
@@ -1613,7 +1653,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
-    //% weight=66 blockId=qdee_belt_setPixelRGBSingle block="Set light belt index(0~29)|%lightoffset|color to %rgb(1~9)"
+    //% weight=66 blockId=qdee_belt_setPixelRGBSingleRGBIndex block="Set light belt index(0~29)|%lightoffset|color to %rgb(1~9)"
     //% lightoffset.min=0  lightoffset.max=29 
     export function qdee_belt_setPixelRGBSingleRGBIndex(lightoffset: number, rgb: number)
     { 
