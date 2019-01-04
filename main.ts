@@ -1182,7 +1182,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
 	 *  Color sensor return the color.
 	 */
 	//% weight=83 blockId=qdee_checkCurrentColor block="Current color %color"
-    export function qdee_checkCurrentColor(color: qdee_Colors): boolean {
+   export function qdee_checkCurrentColor(color: qdee_Colors): boolean {
 		let r = readRedLight();
 		let g = readGreenLight();
 		let b = readBlueLight();
@@ -1205,30 +1205,31 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
 		{
 			t = qdee_Colors.Blue;
          }
-        //  serial.writeNumber(r); 
-        //  serial.writeLine("->red");
-        //  serial.writeNumber(g); 
-        //  serial.writeLine("->green"); 
-        //  serial.writeNumber(b); 
-        //  serial.writeLine("->blue"); 
+         serial.writeNumber(r); 
+         serial.writeLine("->red");
+         serial.writeNumber(g); 
+         serial.writeLine("->green"); 
+         serial.writeNumber(b); 
+         serial.writeLine("->blue"); 
         if(r < 260 && g < 260 && b < 530)
 		{
             t = qdee_Colors.Black;
             return (color == t);
         }
-        else if (r > 3200 && g > 5000 && b > 7000)
+        else if (r > 10000 && g > 16000 && b > 22000)
         {
-            t = qdee_Colors.White;
+	    if(g * 2 > b)
+            	t = qdee_Colors.White;
             return (color == t);
         }
-		if (t == qdee_Colors.Blue && b > 2000) {
+		if (t == qdee_Colors.Blue && b > 3500) {
            // serial.writeLine("blue");
             
 		}
-		else if (t == qdee_Colors.Green && g > 1200) {
+		else if (t == qdee_Colors.Green && g > 5000) {
            // serial.writeLine("green");
 		}
-		else if (t == qdee_Colors.Red && r > 1200) {
+		else if (t == qdee_Colors.Red && r > 3500) {
 			//serial.writeLine("red");
 		}
 		else
@@ -1238,7 +1239,6 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         }		
         return (color == t);
 	}
-
 /**
 * Get the obstacle avoidance sensor status,1 detect obstacle,0 no detect obstacle
 */   
