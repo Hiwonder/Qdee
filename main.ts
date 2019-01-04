@@ -1197,7 +1197,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
 			t = qdee_Colors.Green;
 		}	
 
-		if (t == qdee_Colors.Green && g < b)
+		if (t == qdee_Colors.Green && g < b - 100)
 		{
 			t = qdee_Colors.Blue;
 		}	
@@ -1205,12 +1205,12 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
 		{
 			t = qdee_Colors.Blue;
          }
-         serial.writeNumber(r); 
-         serial.writeLine("->red");
-         serial.writeNumber(g); 
-         serial.writeLine("->green"); 
-         serial.writeNumber(b); 
-         serial.writeLine("->blue"); 
+//          serial.writeNumber(r); 
+//          serial.writeLine("->red");
+//          serial.writeNumber(g); 
+//          serial.writeLine("->green"); 
+//          serial.writeNumber(b); 
+//          serial.writeLine("->blue"); 
         if(r < 260 && g < 260 && b < 530)
 		{
             t = qdee_Colors.Black;
@@ -1222,11 +1222,11 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
             	t = qdee_Colors.White;
             return (color == t);
         }
-		if (t == qdee_Colors.Blue && b > 3500) {
+		if (t == qdee_Colors.Blue && b > 5000) {
            // serial.writeLine("blue");
             
 		}
-		else if (t == qdee_Colors.Green && g > 5000) {
+		else if (t == qdee_Colors.Green && g > 3500) {
            // serial.writeLine("green");
 		}
 		else if (t == qdee_Colors.Red && r > 3500) {
