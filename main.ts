@@ -663,7 +663,7 @@
 /**
 * Set the number of the servo.
 */
-//% weight=98 blockId=qdee_setBusServoNum block="Set bus servo|number %port|"
+//% weight=98 blockId=qdee_setBusServoNum block="Set bus servo|number %index|"
 export function qdee_setBusServoNum(index: number) {
    let buf = pins.createBuffer(5);
    buf[0] = 0x55;
