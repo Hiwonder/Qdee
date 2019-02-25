@@ -189,5 +189,6 @@
 	"qdee.Qdee_IOTCmdType.TEMP|block":"温度",
 	"qdee.Qdee_IOTCmdType.HUMI|block":"湿度",
 	"qdee.Qdee_IOTCmdType.SOIL_HUMI|block":"土壤湿度",
-	"qdee.Qdee_IOTCmdType.ULTRASONIC|block":"超声波传感器"
+	"qdee.Qdee_IOTCmdType.ULTRASONIC|block":"超声波传感器",
+	"qdee.qdee_playMusic|block":"Qdee播放音乐|编号 %num|"
 }

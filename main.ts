@@ -561,7 +561,7 @@
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUZZER);
                         qdee_sendSensorData(Qdee_IOTCmdType.BUZZER,arg1Int);
-                        qdee_playTone(arg1Int);
+                        qdee_playMusic(arg1Int);
                     }    
                 }
 
@@ -2227,8 +2227,8 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     /**
      * Set Qdee play tone
      */
-    //% weight=49 blockId=qdee_playTone block="Qdee play song|num %num|"
-    export function qdee_playTone(num: Qdee_MusicName) {
+    //% weight=49 blockId=qdee_playMusic block="Qdee play song|num %num|"
+    export function qdee_playMusic(num: Qdee_MusicName) {
         switch (num)
         {
             case Qdee_MusicName.Stop:
@@ -2421,16 +2421,16 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
  
          if (select == Temp_humi.Temperature) {
              tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
-             serial.writeString("temp:");
-             serial.writeNumber(tempValue);
-             serial.writeLine("");
+            //  serial.writeString("temp:");
+            //  serial.writeNumber(tempValue);
+            //  serial.writeLine("");
              return Math.round(tempValue);
          }
          else {
              humiValue = humiValue * 1000 / 1024 / 1024;
-             serial.writeString("humi:");
-             serial.writeNumber(humiValue);
-             serial.writeLine("");
+            //  serial.writeString("humi:");
+            //  serial.writeNumber(humiValue);
+            //  serial.writeLine("");
              return Math.round(humiValue);
          }
      }
