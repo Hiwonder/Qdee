@@ -66,6 +66,13 @@
         Servo2 = 0x02   
     }
 
+    export enum TempSensor { 
+        //% block="Port 4"
+        port4 = 0x04,       
+        //% block="Port 9"
+        port9 = 0x09              
+    }
+     
     export enum ultrasonicPort {
         //% block="Port 1"
         port1 = 0x01,
@@ -81,6 +88,13 @@
         //% block="Port 3"
         port3 = 0x03
      }
+
+     export enum Temp_humi {
+        //% block="Temperature"
+        Temperature = 0x01,
+        //% block="Humidity"
+        Humidity = 0x02
+    }
 
     export enum busServoPort {
         //% block="Port 10"
@@ -296,6 +310,15 @@
         Sensor_1 = 1,
         //% block="sensor 2"
         Sensor_2 = 2
+     }
+
+     export enum LightPort {
+         //% block="Port 1"
+         port1 = 0x01,
+        //% block="Port 6"
+         port6 = 0x06,     
+        //% block="Port 8"
+         port8 = 0x08            
      }
     
      let versionNum: number = -1;//-1为未定义
@@ -2074,5 +2097,176 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         buf[12] = 0xd;
         buf[13] = 0xa;
         serial.writeBuffer(buf);
+     }
+     
+    /**
+     * Get light level
+     */
+    //% weight=46 blockId=qdee_getLightLevel block="Get|%port|light level(0~255)"
+    export function qdee_getLightLevel(port: LightPort): number
+    {
+        let value = 0;
+        switch (port)
+        {
+            case LightPort.port1:
+                value = pins.analogReadPin(AnalogPin.P1);
+                value = mapRGB(value, 0, 1023, 0, 255);
+                break;
+            
+            case LightPort.port6:
+                value = PA6_ad;
+                break;
+            
+            case LightPort.port8:
+                value = PB0_ad;
+                break;
+        }
+        return Math.round(255-value);
+     }
+     
+    /**
+     * Get soil humidity
+     */
+    //% weight=45 blockId="qdee_getsoilhumi" block="Qdee|port %port|get soil humidity"
+    export function qdee_getsoilhumi(port: LightPort): number
+    {
+        let value: number = 0;
+        if (port == LightPort.port1)
+        {
+            value = pins.analogReadPin(AnalogPin.P1);
+            value = mapRGB(value, 0, 1023, 0, 100);
+        }
+        else if (port == LightPort.port6)
+        {
+            value = PA6_ad;
+            value = mapRGB(value, 0, 255, 0, 100);
+        }
+        else if (port == LightPort.port8)
+        {
+            value = PB0_ad;
+            value = mapRGB(value, 0, 255, 0, 100); 
+        }
+        return Math.round(value);
+     }
+
+
+     let ATH10_I2C_ADDR = 0x38;
+     
+
+     function i2cwrite(value: number): number {
+        let buf = pins.createBuffer(2);
+        buf[0] = value >> 8;
+        buf[1] = value & 0xff;
+        let rvalue = pins.i2cWriteBuffer(ATH10_I2C_ADDR, buf);
+        // serial.writeString("writeback:");
+        // serial.writeNumber(rvalue);
+        // serial.writeLine("");
+        return rvalue;
     }
+
+    function i2cread(): Buffer {
+        let val = pins.i2cReadBuffer(SHT3XD_ADDRESS, 6);
+        return val;
+    }
+
+    function qdee_initTempHumiSensor(): boolean {
+        for (let i = 0; i < 10; i++)
+        {
+            if (qdee_GetInitStatus())
+            {
+                return true;
+            }    
+            basic.pause(500);
+        }
+        return false;
+     }
+
+     function qdee_GetInitStatus(): boolean {
+        if ((i2cwrite(0x8e1) & 0x68) == 0x08)
+            return true;
+        else
+            return false;
+     }
+
+     function qdee_getAc(): boolean {
+        if ((i2cwrite(0x33ac) & 0x80) == 0x80)
+            return true;
+        else
+            return false;
+     }
+
+      function readTempHumi(select: Temp_humi): number {
+         if (!qdee_GetInitStatus())
+         {
+             return 0;
+         }
+         for (let i = 0; i < 100; i++)
+         {
+             if (!qdee_getAc())
+             {
+                 break;
+             }
+             basic.pause(20);
+         }
+         
+        let buf = i2cread();
+        if (buf.length != 6) {
+            // serial.writeLine("444444")
+            return 0;
+        }
+        serial.writeString("buf[0]:");
+        serial.writeNumber(buf[0]);
+        serial.writeLine("");
+        serial.writeString("buf[1]:");
+        serial.writeNumber(buf[1]);
+         serial.writeLine("");
+         serial.writeString("buf[2]:");
+         serial.writeNumber(buf[2]);
+         serial.writeLine("");
+         serial.writeString("buf[3]:");
+         serial.writeNumber(buf[3]);
+         serial.writeLine("");
+         serial.writeString("buf[4]:");
+         serial.writeNumber(buf[4]);
+         serial.writeLine("");
+         serial.writeString("buf[5]:");
+         serial.writeNumber(buf[5]);
+         serial.writeLine("");
+
+         let humiValue: number = 0;
+         humiValue = (humiValue | buf[1]) << 8;
+         humiValue = (humiValue | buf[2]) << 8;
+         humiValue = humiValue | buf[3];
+         humiValue = humiValue >> 4;
+
+         let tempValue: number = 0;
+         tempValue = (tempValue | buf[3]) << 8;
+         tempValue = (tempValue | buf[4]) << 8;
+         tempValue = tempValue | buf[5];
+         tempValue = tempValue & 0xfffff;
+
+        if (select == Temp_humi.Temperature) {
+            tempValue = tempValue*200*10/1024/1024-500;
+            serial.writeString("temp:");
+            serial.writeNumber(tempValue);
+            serial.writeLine("");
+            return Math.round(tempValue);
+        }
+        else {
+            humiValue = humiValue*1000/1024/1024;
+            serial.writeString("humi:");
+            serial.writeNumber(humiValue);
+            serial.writeLine("");
+            return Math.round(humiValue);
+        }
+     }
+     
+    /**
+      * Get sensor temperature and humidity
+      */
+     //% weight=44 blockId="qdee_gettemperature" block="Qdee|port %port|get %select"
+     export function qdee_gettemperature(port: TempSensor, select: Temp_humi): number {
+        return readTempHumi(select);
+   }
+
 }
