@@ -59,54 +59,6 @@
         port2 = 0x02,       
     }
 
-    export enum Qdee_MusicName {
-        //% block = "stop"
-        Stop = 0x00,
-        //% block="dadadum"
-        Dadadum = 0x01,
-        //% block="little star"
-        Star = 0x02,      
-        //% block="ringtone"
-        Ring = 0x03,       
-        //% block="brithday"
-        Birth = 0x04,   
-        //% block="wedding"        
-        Wedding = 0x05,       
-        //% block="jump up"
-        JumpUp = 0x06,      
-        //% block="jump down"
-        JumpDown = 0x07,        
-        //% block="power up"
-        PowerUp = 0x08,      
-        //% block="power down"
-        PowerDown = 0x09             
-     }
-     
-     export enum Qdee_IOTCmdType {
-        //% block="led color"
-        LED_COLOR = 1,
-        //% block="Buzzer"
-        BUZZER = 2,
-        //% block="Show"
-        SHOW = 3,
-        //% block="Shake"
-         SHAKE = 4,
-        //% block="IR remote"
-         IR_REMOTE = 5,
-        //% block="Sound level"
-         SOUND = 6,
-        //% block="Light"
-        LIGHT = 7,        
-        //% block="Temperature"
-        TEMP = 8,
-        //% block="Humidity"
-         HUMI = 9,
-        //% block="Soil humidity"
-        SOIL_HUMI = 10,   
-        //% block="Ultrasonic"
-        ULTRASONIC = 11
-    }
-     
     export enum Servos {
         //% block="servo 1"
         Servo1 = 0x01,
@@ -114,13 +66,6 @@
         Servo2 = 0x02   
     }
 
-    export enum TempSensor { 
-        //% block="Port 4"
-        port4 = 0x04,       
-        //% block="Port 9"
-        port9 = 0x09              
-    }
-     
     export enum ultrasonicPort {
         //% block="Port 1"
         port1 = 0x01,
@@ -136,13 +81,6 @@
         //% block="Port 3"
         port3 = 0x03
      }
-
-     export enum Temp_humi {
-        //% block="Temperature"
-        Temperature = 0x01,
-        //% block="Humidity"
-        Humidity = 0x02
-    }
 
     export enum busServoPort {
         //% block="Port 10"
@@ -359,15 +297,6 @@
         //% block="sensor 2"
         Sensor_2 = 2
      }
-
-     export enum LightPort {
-         //% block="Port 1"
-         port1 = 0x01,
-        //% block="Port 6"
-         port6 = 0x06,     
-        //% block="Port 8"
-         port8 = 0x08            
-     }
     
      let versionNum: number = -1;//-1为未定义
      let readTimes: number = 0;
@@ -393,7 +322,6 @@
             basic.pause(30)
         }
         basic.pause(2000);
-        qdee_initTempHumiSensor();
         initExtPins();
     }
 
@@ -440,8 +368,6 @@
     let MESSAGE_HEAD = 0xff;
     let MESSAGE_MAC = 0x100;
     let MESSAGE_ANGLE = 0x101;
-     
-     let MESSAGE_IOT_HEAD = 0x102;
 
     let i2cPortValid: boolean = true;
     let connectStatus: boolean = false;
@@ -462,171 +388,96 @@
         let index = findIndexof(handleCmd, "$", 0);
         if (index != -1) {
             let cmd: string = handleCmd.substr(0, index);
-            if (cmd.charAt(0).compare("A") == 0)
-            {
-                if (cmd.length == 13)
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                    let arg5Int: number = strToNumber(cmd.substr(9, 2));
-                    let arg6Int: number = strToNumber(cmd.substr(11, 2));
-    
-                    PA6_ad = arg1Int;
-                    PA7_ad = arg2Int;
-                    PB0_ad = arg3Int;
-                    PB1_ad = arg4Int;   
-    
-                    if (arg5Int != -1)
-                    {
-                        currentVoltage = arg5Int*10353/200;
-                    }  
-    
-                    if (arg6Int != -1)
-                    {
-                        volume = arg6Int;
-                    }   
-                    
-                    PA6 = checkADPortValue(arg1Int);
-                    PA7 = checkADPortValue(arg2Int);
-                    PB0 = checkADPortValue(arg3Int);
-                    PB1 = checkADPortValue(arg4Int);
-                }
-                else if (cmd.length == 9)//彩灯颜色
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
-     
-                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LED_COLOR);
-                    if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
-                        qdee_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);    
-                }
-            }  
-            else if (cmd.charAt(0).compare("B") == 0)
-            {
-                if (cmd.length == 16)
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                    let arg5Int: number = strToNumber(cmd.substr(9, 4));
-                    let arg6Int: number = strToNumber(cmd.charAt(9));
-                    let arg7Int: number = strToNumber(cmd.charAt(10));
-                    let arg8Int: number = strToNumber(cmd.charAt(11));
-      
-                    PA6_ad = arg1Int;
-                    PA7_ad = arg2Int;
-                    PB0_ad = arg3Int;
-                    PB1_ad = arg4Int;   
-    
-                    PA6 = checkADPortValue(arg1Int);
-                    PA7 = checkADPortValue(arg2Int);
-                    PB0 = checkADPortValue(arg3Int);
-                    PB1 = checkADPortValue(arg4Int);
-    
-                    if (arg5Int != -1)
-                    {   
-                        let high = (arg5Int >> 8) & 0xff;
-                        let low = arg5Int & 0xff;
-                        if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
-                        {
-                            control.raiseEvent(low,high);    
-                        }
-                        else if (low == 0xff)
-                        {
-                            control.raiseEvent(MESSAGE_HEAD,high);    
-                        }
-                        
-                    }  
-                    if (arg6Int != -1)
-                    {
-                        PC13 = arg6Int;
-                    }
-                    if (arg7Int != -1)
-                    {
-                        PB11 = arg7Int;
-                    }
-                    if (arg8Int != -1)
-                    {
-                        PB10 = arg8Int;    
-                    }
-                }
-                else if (cmd.length == 3)//蜂鸣器
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    if (arg1Int != -1)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUZZER);
-                        qdee_sendSensorData(Qdee_IOTCmdType.BUZZER,arg1Int);
-                        //qdee_playMusic(arg1Int);
-                    }    
-                }
-
-            }  
-           else if (cmd.charAt(0).compare("C") == 0)
-            {
-                if (cmd.length == 11)
-                {
-                    if (lhRGBLightBelt != null)
-                    {
-                        for (let i = 0; i < 10; i++)
-                        {
-                            let color = converOneChar(cmd.charAt(i + 1));
-                            if(color != -1)
-                                 lhRGBLightBelt.setBeltPixelColor(i,color);
-                        }
-                        lhRGBLightBelt.show();
-                    }
-                }
-                else if (cmd.length == 3)//显示
-                {
-                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                    if (arg1Int != -1)
-                    {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SHOW);
-                        qdee_sendSensorData(Qdee_IOTCmdType.SHOW,arg1Int);
-                        qdee_show_expressions(arg1Int);
-                    }    
-                }
-
-            }
-           else if (cmd.charAt(0).compare("E") == 0)//远程遥控按键
+            if (cmd.charAt(0).compare("A") == 0 && cmd.length == 13)
             {
                 let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                if (arg1Int != -1)
+                let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                let arg5Int: number = strToNumber(cmd.substr(9, 2));
+                let arg6Int: number = strToNumber(cmd.substr(11, 2));
+
+                PA6_ad = arg1Int;
+                PA7_ad = arg2Int;
+                PB0_ad = arg3Int;
+                PB1_ad = arg4Int;   
+
+                if (arg5Int != -1)
                 {
-                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.IR_REMOTE);
-                    qdee_sendSensorData(Qdee_IOTCmdType.SHOW, arg1Int);
-                    qdee_send_learn_data(arg1Int);
-                }    
-            }
-            else if (cmd.charAt(0).compare("F") == 0 && cmd.length == 1)//查询音量
+                    currentVoltage = arg5Int*10353/200;
+                }  
+
+                if (arg6Int != -1)
+                {
+                    volume = arg6Int;
+                }   
+                
+                PA6 = checkADPortValue(arg1Int);
+                PA7 = checkADPortValue(arg2Int);
+                PB0 = checkADPortValue(arg3Int);
+                PB1 = checkADPortValue(arg4Int);
+
+            }  
+            if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16)
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SOUND);
-            }
-            else if (cmd.charAt(0).compare("G") == 0 && cmd.length == 1)//查询光线
+                let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                let arg5Int: number = strToNumber(cmd.substr(9, 4));
+                let arg6Int: number = strToNumber(cmd.charAt(9));
+                let arg7Int: number = strToNumber(cmd.charAt(10));
+                let arg8Int: number = strToNumber(cmd.charAt(11));
+  
+                PA6_ad = arg1Int;
+                PA7_ad = arg2Int;
+                PB0_ad = arg3Int;
+                PB1_ad = arg4Int;   
+
+                PA6 = checkADPortValue(arg1Int);
+                PA7 = checkADPortValue(arg2Int);
+                PB0 = checkADPortValue(arg3Int);
+                PB1 = checkADPortValue(arg4Int);
+
+                if (arg5Int != -1)
+                {   
+                    let high = (arg5Int >> 8) & 0xff;
+                    let low = arg5Int & 0xff;
+                    if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
+                    {
+                        control.raiseEvent(low,high);    
+                    }
+                    else if (low == 0xff)
+                    {
+                        control.raiseEvent(MESSAGE_HEAD,high);    
+                    }
+                    
+                }  
+                if (arg6Int != -1)
+                {
+                    PC13 = arg6Int;
+                }
+                if (arg7Int != -1)
+                {
+                    PB11 = arg7Int;
+                }
+                if (arg8Int != -1)
+                {
+                    PB10 = arg8Int;    
+                }
+            }  
+            if (cmd.charAt(0).compare("C") == 0 && cmd.length == 11)
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT);
-            }
-            else if (cmd.charAt(0).compare("H") == 0 && cmd.length == 1)//查询温度
-            {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.TEMP);
-            }
-            else if (cmd.charAt(0).compare("I") == 0 && cmd.length == 1)//查询湿度
-            {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.HUMI);
-            }
-            else if (cmd.charAt(0).compare("J") == 0 && cmd.length == 1)//查询土壤湿度
-            {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SOIL_HUMI);
-            }   
-            else if (cmd.charAt(0).compare("K") == 0 && cmd.length == 1)//查询超声波
-            {
-                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ULTRASONIC);
+                if (lhRGBLightBelt != null)
+                {
+                    for (let i = 0; i < 10; i++)
+                    {
+                        let color = converOneChar(cmd.charAt(i + 1));
+                        if(color != -1)
+                             lhRGBLightBelt.setBeltPixelColor(i,color);
+                    }
+                    lhRGBLightBelt.show();
+                }
             }
             if (cmd.compare("IROK") == 0)
             {
@@ -784,7 +635,6 @@
 */
 //% weight=99 blockId=qdee_setBusServo block="Set bus servo|port %port|index %index|angle(-120~120) %angle|duration %duration"
 //% angle.min=-120 angle.max=120
-//% inlineInputMode=inline	 
      export function qdee_setBusServo(port: busServoPort, index: number, angle: number, duration: number) {
          angle = angle * -1;
     if (angle > 120 || angle < -120)
@@ -813,7 +663,7 @@
 /**
 * Set the number of the servo.
 */
-//% weight=98 blockId=qdee_setBusServoNum block="Set bus servo|number %index|"
+//% weight=98 blockId=qdee_setBusServoNum block="Set bus servo|number %port|"
 export function qdee_setBusServoNum(index: number) {
    let buf = pins.createBuffer(5);
    buf[0] = 0x55;
@@ -1726,12 +1576,8 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     export function qdee_setPixelRGBArgs(lightoffset: QdeeLights, rgb: number)
     {
         lhRGBLight.setPixelColor(lightoffset, rgb);
-     }
-     
-
-    function qdee_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
-        lhRGBLight.setPixelColorRGB(lightoffset, r, g, b);
     }
+
 
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
@@ -2074,11 +1920,158 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     }
 
     /**
-     *  The Melody of Little star   
+     * The distance from the ultrasonic obstacle to the standard command, which is sent to the mobile phone. The APP will indicate the distance of the ultrasonic obstacle.
      */
-    //% weight=49 blockId=littleStarMelody block="Little star melody"
-    export function littleStarMelody(): string[] {
-        return ["C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4"];
+    //% weight=57 blockId=qdee_convertUltrasonic block="Convert ultrasonic distance %data"
+    export function qdee_convertUltrasonic(data: number): string {
+        let cmdStr: string = "CMD|03|";
+        cmdStr += data.toString();
+        cmdStr += "|$";
+        return cmdStr;
     }
-     
+    /**
+     * The conversion temperature value to standard command, sent to the mobile phone, and the APP displays the current temperature.
+     */
+    //% weight=56 blockId=qdee_convertTemperature block="Convert temperature %data"
+    export function qdee_convertTemperature(data: number): string {
+        let cmdStr: string = "CMD|04|";
+        cmdStr += data.toString();
+        cmdStr += "|$";
+        return cmdStr;
+    }
+
+    /**
+     * Convert the sound value to the standard command and send it to the mobile phone. (0~255).
+     */
+    //% weight=55 blockId=qdee_convertLight block="Convert sound %data"
+    export function qdee_convertSound(data: number): string {
+        let cmdStr: string = "CMD|05|";
+        cmdStr += data.toString();
+        cmdStr += "|$";
+        return cmdStr;
+    }
+
+    /**
+     * Convert the light value to the standard command and send it to the mobile phone. The APP displays the current light level (0~255).
+     */
+    //% weight=54 blockId=qdee_convertLight block="Convert light %data"
+    export function qdee_convertLight(data: number): string {
+        let cmdStr: string = "CMD|06|";
+        cmdStr += data.toString();
+        cmdStr += "|$";
+        return cmdStr;
+    }
+    
+    /**
+     * Convert the battery value to the standard command and send it to the mobile phone. The APP displays the current voltage.
+     */
+    //% weight=53 blockId=qdee_convertBattery blockGap=50 block="Convert battery %data"
+    export function qdee_convertBattery(data: number): string {
+        let cmdStr: string = "CMD|07|";
+        cmdStr += data.toString();
+        cmdStr += "|$";
+        return cmdStr;
+    }
+
+
+    /**
+     * Connect to the wifi
+     */
+    //% weight=52 blockId=qdee_connectWifi block="Connect to the Wifi,name|%ssid|and password %passwrd"
+    export function qdee_connectWifi(ssid: string, passwrd: string)
+    {
+        let buf = pins.createBuffer(ssid.length + passwrd.length + 10);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = (ssid.length + passwrd.length + 8) & 0xff;
+        buf[3] = 0x3E;//cmd type
+        buf[4] = 0x6;
+        buf[5] = 0x22;
+        for (let i = 0; i < ssid.length; i++)
+        {
+            buf[6 + i] = ssid.charCodeAt(i);
+        }   
+        buf[ssid.length + 6] = 0x22;
+        buf[ssid.length + 7] = 0x2C;
+        buf[ssid.length + 8] = 0x22;
+        for (let i = 0; i < passwrd.length; i++)
+        {
+            buf[ssid.length + 9 + i] = passwrd.charCodeAt(i);
+        }   
+        buf[ssid.length + passwrd.length + 9] = 0x22;
+        serial.writeBuffer(buf);
+    }
+
+    /**
+     * Detect the device connect status
+     */
+    //% weight=51 blockId=qdee_isConnectedServer block="Device is connected to server?"
+    export function qdee_isConnectedServer(): boolean
+    {
+        return connectStatus;
+    }
+
+    /**
+     * Send get mac address command
+     */
+    //% weight=50 blockId=qdee_send_getMac block="Send pair command"
+    export function qdee_send_getMac()
+    {
+        let buf = pins.createBuffer(5);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = 0x03;
+        buf[3] = 0x3E;//cmd type
+        buf[4] = 0x08;
+        serial.writeBuffer(buf);
+    }
+
+    /**
+     * Do someting when Qdee receive mac adress
+     * @param body code to run when event is raised
+     */
+    //% weight=49 blockId=onQdee_getMac block="On Qdee get device id"
+    export function onQdee_getMac(body: Action) {
+        control.onEvent(MESSAGE_MAC,1,body);
+    }
+
+    /**
+     * Get device mac address
+     */
+    //% weight=48 blockId=qdee_getMacAddress block="Get device id"
+    export function qdee_getMacAddress(): string
+    {
+        return macStr + "$";
+    }
+
+    /**
+     * Send sofa status
+     */
+    //% weight=47 blockId=qdee_sendSofa block="Send sofa command %sofa"
+    export function qdee_sendSofa(sofa: SofaStatus)
+    {
+        let buf = pins.createBuffer(14);
+        buf[0] = 0x55;
+        buf[1] = 0x55;
+        buf[2] = 0x0C;
+        buf[3] = 0x3E;
+        buf[4] = 0x09;//cmd type
+        buf[5] = 0x50;
+        buf[6] = 0x45;
+        buf[7] = 0x4F;
+        buf[8] = 0x50;
+        buf[9] = 0x4C;
+        buf[10] = 0x45;
+        if (sofa == SofaStatus.VACATION)
+        {
+            buf[11] = 0x30;
+        }
+        else if (sofa == SofaStatus.OCCUPIED)
+        {
+            buf[11] = 0x31;
+        }
+        buf[12] = 0xd;
+        buf[13] = 0xa;
+        serial.writeBuffer(buf);
+    }
 }
