@@ -2153,7 +2153,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      let ATH10_I2C_ADDR = 0x38;
      
 
-     function i2cwrite(value: number): number {
+     function temp_i2cwrite(value: number): number {
         let buf = pins.createBuffer(2);
         buf[0] = value >> 8;
         buf[1] = value & 0xff;
@@ -2164,7 +2164,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         return rvalue;
     }
 
-    function i2cread(): Buffer {
+    function temp_i2cread(): Buffer {
         let val = pins.i2cReadBuffer(SHT3XD_ADDRESS, 6);
         return val;
     }
@@ -2182,14 +2182,14 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      }
 
      function qdee_GetInitStatus(): boolean {
-        if ((i2cwrite(0x8e1) & 0x68) == 0x08)
+        if ((temp_i2cwrite(0x8e1) & 0x68) == 0x08)
             return true;
         else
             return false;
      }
 
      function qdee_getAc(): boolean {
-        if ((i2cwrite(0x33ac) & 0x80) == 0x80)
+        if ((temp_i2cwrite(0x33ac) & 0x80) == 0x80)
             return true;
         else
             return false;
@@ -2209,7 +2209,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
              basic.pause(20);
          }
          
-        let buf = i2cread();
+        let buf = temp_i2cread();
         if (buf.length != 6) {
             // serial.writeLine("444444")
             return 0;
