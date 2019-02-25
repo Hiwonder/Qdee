@@ -59,6 +59,54 @@
         port2 = 0x02,       
     }
 
+    export enum Qdee_MusicName {
+        //% block = "stop"
+        Stop = 0x00,
+        //% block="dadadum"
+        Dadadum = 0x01,
+        //% block="little star"
+        Star = 0x02,      
+        //% block="ringtone"
+        Ring = 0x03,       
+        //% block="brithday"
+        Birth = 0x04,   
+        //% block="wedding"        
+        Wedding = 0x05,       
+        //% block="jump up"
+        JumpUp = 0x06,      
+        //% block="jump down"
+        JumpDown = 0x07,        
+        //% block="power up"
+        PowerUp = 0x08,      
+        //% block="power down"
+        PowerDown = 0x09             
+     }
+     
+     export enum Qdee_IOTCmdType {
+        //% block="led color"
+        LED_COLOR = 1,
+        //% block="Buzzer"
+        BUZZER = 2,
+        //% block="Show"
+        SHOW = 3,
+        //% block="Shake"
+         SHAKE = 4,
+        //% block="IR remote"
+         IR_REMOTE = 5,
+        //% block="Sound level"
+         SOUND = 6,
+        //% block="Light"
+        LIGHT = 7,        
+        //% block="Temperature"
+        TEMP = 8,
+        //% block="Humidity"
+         HUMI = 9,
+        //% block="Soil humidity"
+        SOIL_HUMI = 10,   
+        //% block="Ultrasonic"
+        ULTRASONIC = 11
+    }
+     
     export enum Servos {
         //% block="servo 1"
         Servo1 = 0x01,
@@ -391,6 +439,8 @@
     let MESSAGE_HEAD = 0xff;
     let MESSAGE_MAC = 0x100;
     let MESSAGE_ANGLE = 0x101;
+     
+     let MESSAGE_IOT_HEAD = 0x102;
 
     let i2cPortValid: boolean = true;
     let connectStatus: boolean = false;
@@ -411,96 +461,171 @@
         let index = findIndexof(handleCmd, "$", 0);
         if (index != -1) {
             let cmd: string = handleCmd.substr(0, index);
-            if (cmd.charAt(0).compare("A") == 0 && cmd.length == 13)
+            if (cmd.charAt(0).compare("A") == 0)
             {
-                let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                let arg5Int: number = strToNumber(cmd.substr(9, 2));
-                let arg6Int: number = strToNumber(cmd.substr(11, 2));
-
-                PA6_ad = arg1Int;
-                PA7_ad = arg2Int;
-                PB0_ad = arg3Int;
-                PB1_ad = arg4Int;   
-
-                if (arg5Int != -1)
+                if (cmd.length == 13)
                 {
-                    currentVoltage = arg5Int*10353/200;
-                }  
-
-                if (arg6Int != -1)
-                {
-                    volume = arg6Int;
-                }   
-                
-                PA6 = checkADPortValue(arg1Int);
-                PA7 = checkADPortValue(arg2Int);
-                PB0 = checkADPortValue(arg3Int);
-                PB1 = checkADPortValue(arg4Int);
-
-            }  
-            if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16)
-            {
-                let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                let arg5Int: number = strToNumber(cmd.substr(9, 4));
-                let arg6Int: number = strToNumber(cmd.charAt(9));
-                let arg7Int: number = strToNumber(cmd.charAt(10));
-                let arg8Int: number = strToNumber(cmd.charAt(11));
-  
-                PA6_ad = arg1Int;
-                PA7_ad = arg2Int;
-                PB0_ad = arg3Int;
-                PB1_ad = arg4Int;   
-
-                PA6 = checkADPortValue(arg1Int);
-                PA7 = checkADPortValue(arg2Int);
-                PB0 = checkADPortValue(arg3Int);
-                PB1 = checkADPortValue(arg4Int);
-
-                if (arg5Int != -1)
-                {   
-                    let high = (arg5Int >> 8) & 0xff;
-                    let low = arg5Int & 0xff;
-                    if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                    let arg5Int: number = strToNumber(cmd.substr(9, 2));
+                    let arg6Int: number = strToNumber(cmd.substr(11, 2));
+    
+                    PA6_ad = arg1Int;
+                    PA7_ad = arg2Int;
+                    PB0_ad = arg3Int;
+                    PB1_ad = arg4Int;   
+    
+                    if (arg5Int != -1)
                     {
-                        control.raiseEvent(low,high);    
-                    }
-                    else if (low == 0xff)
+                        currentVoltage = arg5Int*10353/200;
+                    }  
+    
+                    if (arg6Int != -1)
                     {
-                        control.raiseEvent(MESSAGE_HEAD,high);    
-                    }
+                        volume = arg6Int;
+                    }   
                     
-                }  
-                if (arg6Int != -1)
-                {
-                    PC13 = arg6Int;
+                    PA6 = checkADPortValue(arg1Int);
+                    PA7 = checkADPortValue(arg2Int);
+                    PB0 = checkADPortValue(arg3Int);
+                    PB1 = checkADPortValue(arg4Int);
                 }
-                if (arg7Int != -1)
+                else if (cmd.length == 9)//彩灯颜色
                 {
-                    PB11 = arg7Int;
-                }
-                if (arg8Int != -1)
-                {
-                    PB10 = arg8Int;    
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+     
+                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LED_COLOR);
+                    if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
+                        qdee_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);    
                 }
             }  
-            if (cmd.charAt(0).compare("C") == 0 && cmd.length == 11)
+            else if (cmd.charAt(0).compare("B") == 0)
             {
-                if (lhRGBLightBelt != null)
+                if (cmd.length == 16)
                 {
-                    for (let i = 0; i < 10; i++)
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                    let arg5Int: number = strToNumber(cmd.substr(9, 4));
+                    let arg6Int: number = strToNumber(cmd.charAt(9));
+                    let arg7Int: number = strToNumber(cmd.charAt(10));
+                    let arg8Int: number = strToNumber(cmd.charAt(11));
+      
+                    PA6_ad = arg1Int;
+                    PA7_ad = arg2Int;
+                    PB0_ad = arg3Int;
+                    PB1_ad = arg4Int;   
+    
+                    PA6 = checkADPortValue(arg1Int);
+                    PA7 = checkADPortValue(arg2Int);
+                    PB0 = checkADPortValue(arg3Int);
+                    PB1 = checkADPortValue(arg4Int);
+    
+                    if (arg5Int != -1)
+                    {   
+                        let high = (arg5Int >> 8) & 0xff;
+                        let low = arg5Int & 0xff;
+                        if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
+                        {
+                            control.raiseEvent(low,high);    
+                        }
+                        else if (low == 0xff)
+                        {
+                            control.raiseEvent(MESSAGE_HEAD,high);    
+                        }
+                        
+                    }  
+                    if (arg6Int != -1)
                     {
-                        let color = converOneChar(cmd.charAt(i + 1));
-                        if(color != -1)
-                             lhRGBLightBelt.setBeltPixelColor(i,color);
+                        PC13 = arg6Int;
                     }
-                    lhRGBLightBelt.show();
+                    if (arg7Int != -1)
+                    {
+                        PB11 = arg7Int;
+                    }
+                    if (arg8Int != -1)
+                    {
+                        PB10 = arg8Int;    
+                    }
                 }
+                else if (cmd.length == 3)//蜂鸣器
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    if (arg1Int != -1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUZZER);
+                        qdee_sendSensorData(Qdee_IOTCmdType.BUZZER,arg1Int);
+                        qdee_playTone(arg1Int);
+                    }    
+                }
+
+            }  
+           else if (cmd.charAt(0).compare("C") == 0)
+            {
+                if (cmd.length == 11)
+                {
+                    if (lhRGBLightBelt != null)
+                    {
+                        for (let i = 0; i < 10; i++)
+                        {
+                            let color = converOneChar(cmd.charAt(i + 1));
+                            if(color != -1)
+                                 lhRGBLightBelt.setBeltPixelColor(i,color);
+                        }
+                        lhRGBLightBelt.show();
+                    }
+                }
+                else if (cmd.length == 3)//显示
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    if (arg1Int != -1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SHOW);
+                        qdee_sendSensorData(Qdee_IOTCmdType.SHOW,arg1Int);
+                        qdee_show_expressions(arg1Int);
+                    }    
+                }
+
+            }
+           else if (cmd.charAt(0).compare("E") == 0)//远程遥控按键
+            {
+                let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                if (arg1Int != -1)
+                {
+                    control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.IR_REMOTE);
+                    qdee_sendSensorData(Qdee_IOTCmdType.SHOW, arg1Int);
+                    qdee_send_learn_data(arg1Int);
+                }    
+            }
+            else if (cmd.charAt(0).compare("F") == 0 && cmd.length == 1)//查询音量
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SOUND);
+            }
+            else if (cmd.charAt(0).compare("G") == 0 && cmd.length == 1)//查询光线
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.LIGHT);
+            }
+            else if (cmd.charAt(0).compare("H") == 0 && cmd.length == 1)//查询温度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.TEMP);
+            }
+            else if (cmd.charAt(0).compare("I") == 0 && cmd.length == 1)//查询湿度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.HUMI);
+            }
+            else if (cmd.charAt(0).compare("J") == 0 && cmd.length == 1)//查询土壤湿度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.SOIL_HUMI);
+            }   
+            else if (cmd.charAt(0).compare("K") == 0 && cmd.length == 1)//查询超声波
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.ULTRASONIC);
             }
             if (cmd.compare("IROK") == 0)
             {
@@ -1600,8 +1725,12 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     export function qdee_setPixelRGBArgs(lightoffset: QdeeLights, rgb: number)
     {
         lhRGBLight.setPixelColor(lightoffset, rgb);
-    }
+     }
+     
 
+    function qdee_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
+        lhRGBLight.setPixelColorRGB(lightoffset, r, g, b);
+    }
 
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
@@ -2026,78 +2155,123 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         serial.writeBuffer(buf);
     }
 
-    /**
-     * Detect the device connect status
-     */
-    //% weight=51 blockId=qdee_isConnectedServer block="Device is connected to server?"
-    export function qdee_isConnectedServer(): boolean
-    {
-        return connectStatus;
+
+        /**
+         * Do someting when Qdee receive remote-control code
+         * @param code the ir key button that needs to be pressed
+         * @param body code to run when event is raised
+         */
+    //% weight=51 blockId=onIOTbitGetCmd block="on IOTbit get|%code|Command"
+    export function onIOTbitGetCmd(code: Qdee_IOTCmdType, body: Action) {
+        control.onEvent(MESSAGE_IOT_HEAD, code, body);
     }
 
-    /**
-     * Send get mac address command
+     /**
+     * Send sensor data 
+     * 
      */
-    //% weight=50 blockId=qdee_send_getMac block="Send pair command"
-    export function qdee_send_getMac()
-    {
-        let buf = pins.createBuffer(5);
+    //% weight=50 blockId="qdee_sendSensorData" block="Send|%cmd|sensor data %data"
+    export function qdee_sendSensorData(cmd: Qdee_IOTCmdType, data: number) {
+        let cmdStr: string;
+        switch (cmd) {
+            case Qdee_IOTCmdType.LED_COLOR:
+                cmdStr = "A";
+                break;
+            case Qdee_IOTCmdType.BUZZER:
+                cmdStr = "B";
+                break;
+            case Qdee_IOTCmdType.SHOW:
+                cmdStr = "C";
+                break;
+            case Qdee_IOTCmdType.SHAKE:
+                cmdStr = "D";
+                break;  
+            case Qdee_IOTCmdType.IR_REMOTE:
+                cmdStr = "E";
+                break;  
+            case Qdee_IOTCmdType.SOUND:
+                cmdStr = "F";
+                break;
+            case Qdee_IOTCmdType.LIGHT:
+                cmdStr = "G";
+                break;
+            case Qdee_IOTCmdType.TEMP:
+                cmdStr = "H";
+                break;
+            case Qdee_IOTCmdType.HUMI:
+                cmdStr = "I";
+                break;
+            case Qdee_IOTCmdType.SOIL_HUMI:
+                cmdStr = "J";
+                break;
+            case Qdee_IOTCmdType.ULTRASONIC:
+                cmdStr = "K";
+                break;
+        }
+        cmdStr += data.toString();
+        cmdStr += "$";
+
+        let buf = pins.createBuffer(cmdStr.length + 5);
         buf[0] = 0x55;
         buf[1] = 0x55;
-        buf[2] = 0x03;
-        buf[3] = 0x3E;//cmd type
-        buf[4] = 0x08;
-        serial.writeBuffer(buf);
-    }
-
-    /**
-     * Do someting when Qdee receive mac adress
-     * @param body code to run when event is raised
-     */
-    //% weight=49 blockId=onQdee_getMac block="On Qdee get device id"
-    export function onQdee_getMac(body: Action) {
-        control.onEvent(MESSAGE_MAC,1,body);
-    }
-
-    /**
-     * Get device mac address
-     */
-    //% weight=48 blockId=qdee_getMacAddress block="Get device id"
-    export function qdee_getMacAddress(): string
-    {
-        return macStr + "$";
-    }
-
-    /**
-     * Send sofa status
-     */
-    //% weight=47 blockId=qdee_sendSofa block="Send sofa command %sofa"
-    export function qdee_sendSofa(sofa: SofaStatus)
-    {
-        let buf = pins.createBuffer(14);
-        buf[0] = 0x55;
-        buf[1] = 0x55;
-        buf[2] = 0x0C;
-        buf[3] = 0x3E;
-        buf[4] = 0x09;//cmd type
-        buf[5] = 0x50;
-        buf[6] = 0x45;
-        buf[7] = 0x4F;
-        buf[8] = 0x50;
-        buf[9] = 0x4C;
-        buf[10] = 0x45;
-        if (sofa == SofaStatus.VACATION)
-        {
-            buf[11] = 0x30;
+        buf[2] = (cmdStr.length + 3) & 0xff;
+        buf[3] = 0x3F;//cmd type
+        buf[4] = 0x09;
+        for (let i = 0; i < cmdStr.length; i++) {
+            buf[5 + i] = cmdStr.charCodeAt(i);
         }
-        else if (sofa == SofaStatus.OCCUPIED)
-        {
-            buf[11] = 0x31;
-        }
-        buf[12] = 0xd;
-        buf[13] = 0xa;
         serial.writeBuffer(buf);
      }
+     
+        
+    /**
+     * Set Qdee play tone
+     */
+    //% weight=49 blockId=qdee_playTone block="Qdee play song|num %num|"
+    export function qdee_playTone(num: Qdee_MusicName) {
+        switch (num)
+        {
+            case Qdee_MusicName.Stop:
+                music.playTone(262, music.beat(BeatFraction.Sixteenth));
+                break;
+            case Qdee_MusicName.Dadadum:
+                music.beginMelody(music.builtInMelody(Melodies.Dadadadum), MelodyOptions.Once);
+                break;
+            
+            case Qdee_MusicName.Star:
+                music.beginMelody(littleStarMelody(), MelodyOptions.Once)
+                break;       
+            
+            case Qdee_MusicName.Ring:
+                music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once)
+                break;          
+            
+            case Qdee_MusicName.Birth:
+                music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.Wedding:
+                music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.JumpUp:
+                music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.JumpDown:
+                music.beginMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.PowerUp:
+                music.beginMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.PowerDown:
+                music.beginMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once)
+                break; 
+        }
+
+    }
      
     /**
      * Get light level

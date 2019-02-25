@@ -178,5 +178,16 @@
 	"qdee.Temp_humi.Temperature|block":"温度",
 	"qdee.Temp_humi.Humidity|block":"湿度",
 	"qdee.qdee_getsoilhumi|block":"Qdee|接口 %port|土壤湿度",
-	"qdee.qdee_getLightLevel|block":"光线等级(0~255) %port"
+	"qdee.qdee_getLightLevel|block":"光线等级(0~255) %port",
+	"qdee.Qdee_IOTCmdType.LED_COLOR|block":"彩灯颜色",
+	"qdee.Qdee_IOTCmdType.BUZZER|block":"蜂鸣器",
+	"qdee.Qdee_IOTCmdType.SHOW|block":"显示",
+	"qdee.Qdee_IOTCmdType.SHAKE|block":"抖动",	
+	"qdee.Qdee_IOTCmdType.IR_REMOTE|block":"远程遥控",
+	"qdee.Qdee_IOTCmdType.SOUND|block":"声音",
+	"qdee.Qdee_IOTCmdType.LIGHT|block":"光线亮度",
+	"qdee.Qdee_IOTCmdType.TEMP|block":"温度",
+	"qdee.Qdee_IOTCmdType.HUMI|block":"湿度",
+	"qdee.Qdee_IOTCmdType.SOIL_HUMI|block":"土壤湿度",
+	"qdee.Qdee_IOTCmdType.ULTRASONIC|block":"超声波传感器"
 }

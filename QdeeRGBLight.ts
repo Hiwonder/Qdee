@@ -146,6 +146,27 @@ namespace QdeeRGBLight {
             
         }
 
+        setPixelColorRGB(pixeloffset: number, r: number, g: number, b: number): void {
+
+            for (let i = 0; i < this._length; i++) {
+                this.setPixelRGBValue(i, r, g, b);
+            }
+            this.show();
+        }
+
+        private setPixelRGBValue(pixeloffset: number, r: number, g: number, b: number): void {
+            let stride = this._mode === QdeeRGBPixelMode.RGBW ? 4 : 3;
+            pixeloffset = (pixeloffset + this.start) * stride;
+
+            let br = this.brightness;
+            if (br < 255) {
+                r = (r * br) >> 8;
+                g = (g * br) >> 8;
+                b = (b * br) >> 8;
+            }
+            this.setBufferRGB(pixeloffset, r, g, b)
+        }
+
         private setPixelRGB(pixeloffset: number, rgb: QdeeRGBColors): void {
             if (pixeloffset < 0
                 || pixeloffset >= this._length)
