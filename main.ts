@@ -2310,145 +2310,21 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
      * Get soil humidity
      */
     //% weight=45 blockId="qdee_getsoilhumi" block="Qdee|port %port|get soil humidity"
-    export function qdee_getsoilhumi(port: LightPort): number
-    {
-        let value: number = 0;
-        if (port == LightPort.port1)
-        {
-            value = pins.analogReadPin(AnalogPin.P1);
-            value = mapRGB(value, 0, 1023, 0, 100);
-        }
-        else if (port == LightPort.port6)
-        {
-            value = PA6_ad;
-            value = mapRGB(value, 0, 255, 0, 100);
-        }
-        else if (port == LightPort.port8)
-        {
-            value = PB0_ad;
-            value = mapRGB(value, 0, 255, 0, 100); 
-        }
-        return Math.round(value);
-     }
-
-
-     let ATH10_I2C_ADDR = 0x38;
-
-
-     function temp_i2cwrite(value: number): number {
-         let buf = pins.createBuffer(3);
-         buf[0] = value >> 8;
-         buf[1] = value & 0xff;
-         buf[2] = 0;
-         basic.pause(80);
-         let rvalue = pins.i2cWriteBuffer(ATH10_I2C_ADDR, buf);
-         // serial.writeString("writeback:");
-         // serial.writeNumber(rvalue);
-         // serial.writeLine("");
-         return rvalue;
-     }
- 
-     function temp_i2cread(bytes: number): Buffer {
-         let val = pins.i2cReadBuffer(ATH10_I2C_ADDR, bytes);
-         return val;
-     }
- 
-     function qdee_initTempHumiSensor(): boolean {
-         for (let i = 0; i < 10; i++) {
-             if (qdee_GetInitStatus()) {
-                 return true;
-             }
-             basic.pause(500);
+     export function qdee_getsoilhumi(port: LightPort): number {
+         let value: number = 0;
+         if (port == LightPort.port1) {
+             value = pins.analogReadPin(AnalogPin.P1);
+             value = mapRGB(value, 0, 1023, 0, 100);
          }
-         serial.writeString("init erro");
-         return false;
-     }
- 
-     function qdee_GetInitStatus(): boolean {
-         temp_i2cwrite(0xe108);
-         let value = temp_i2cread(1);
-         if ((value[0] & 0x68) == 0x08)
-             return true;
-         else
-             return false;
-     }
- 
-     function qdee_getAc() {
-         temp_i2cwrite(0xac33);
-         basic.pause(100)
-         let value = temp_i2cread(1);
-         for (let i = 0; i < 100; i++) {
-             if ((value[0] & 0x80) != 0x80) {
-                 basic.pause(20)
-             }
-             else
-                 break;
+         else if (port == LightPort.port6) {
+             value = PA6_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
          }
-     }
- 
-     function readTempHumi(select: Temp_humi): number {
-         while (!qdee_GetInitStatus()) {
-             basic.pause(30);
+         else if (port == LightPort.port8) {
+             value = PB0_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
          }
-         qdee_getAc();
-         let buf = temp_i2cread(6);
-         if (buf.length != 6) {
-             // serial.writeLine("444444")
-             return 0;
-         }
-        //  serial.writeString("buf[0]:");
-        //  serial.writeNumber(buf[0]);
-        //  serial.writeLine("");
-        //  serial.writeString("buf[1]:");
-        //  serial.writeNumber(buf[1]);
-        //  serial.writeLine("");
-        //  serial.writeString("buf[2]:");
-        //  serial.writeNumber(buf[2]);
-        //  serial.writeLine("");
-        //  serial.writeString("buf[3]:");
-        //  serial.writeNumber(buf[3]);
-        //  serial.writeLine("");
-        //  serial.writeString("buf[4]:");
-        //  serial.writeNumber(buf[4]);
-        //  serial.writeLine("");
-        //  serial.writeString("buf[5]:");
-        //  serial.writeNumber(buf[5]);
-        //  serial.writeLine("");
- 
-         let humiValue: number = 0;
-         humiValue = (humiValue | buf[1]) << 8;
-         humiValue = (humiValue | buf[2]) << 8;
-         humiValue = humiValue | buf[3];
-         humiValue = humiValue >> 4;
- 
-         let tempValue: number = 0;
-         tempValue = (tempValue | buf[3]) << 8;
-         tempValue = (tempValue | buf[4]) << 8;
-         tempValue = tempValue | buf[5];
-         tempValue = tempValue & 0xfffff;
- 
-         if (select == Temp_humi.Temperature) {
-             tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
-            //  serial.writeString("temp:");
-            //  serial.writeNumber(tempValue);
-            //  serial.writeLine("");
-             return Math.round(tempValue);
-         }
-         else {
-             humiValue = humiValue * 1000 / 1024 / 1024;
-            //  serial.writeString("humi:");
-            //  serial.writeNumber(humiValue);
-            //  serial.writeLine("");
-             return Math.round(humiValue);
-         }
-     }
- 
-     /**
-       * Get sensor temperature and humidity
-       */
-     //% weight=44 blockId="qdee_gettemperature" block="Qdee|port %port|get %select"
-     export function qdee_gettemperature(port: TempSensor, select: Temp_humi): number {
-         return readTempHumi(select);
+         return Math.round(value);
      }
 
 }
