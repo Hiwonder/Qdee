@@ -2224,8 +2224,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         }
         serial.writeBuffer(buf);
      }
-     
-
+    
      
     /**
      *  The Melody of Little star   
@@ -2234,5 +2233,222 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     export function littleStarMelody(): string[] {
         return ["C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4"];
     }
+     
+        /**
+     * Set Qdee play tone
+     */
+    //% weight=48 blockId=qdee_playMusic block="Qdee play song|num %num|"
+    export function qdee_playMusic(num: Qdee_MusicName) {
+        switch (num)
+        {
+            case Qdee_MusicName.Stop:
+                music.playTone(262, music.beat(BeatFraction.Sixteenth));
+                break;
+            case Qdee_MusicName.Dadadum:
+                music.beginMelody(music.builtInMelody(Melodies.Dadadadum), MelodyOptions.Once);
+                break;
+            
+            case Qdee_MusicName.Star:
+                music.beginMelody(littleStarMelody(), MelodyOptions.Once)
+                break;       
+            
+            case Qdee_MusicName.Ring:
+                music.beginMelody(music.builtInMelody(Melodies.Ringtone), MelodyOptions.Once)
+                break;          
+            
+            case Qdee_MusicName.Birth:
+                music.beginMelody(music.builtInMelody(Melodies.Birthday), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.Wedding:
+                music.beginMelody(music.builtInMelody(Melodies.Wedding), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.JumpUp:
+                music.beginMelody(music.builtInMelody(Melodies.JumpUp), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.JumpDown:
+                music.beginMelody(music.builtInMelody(Melodies.JumpDown), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.PowerUp:
+                music.beginMelody(music.builtInMelody(Melodies.PowerUp), MelodyOptions.Once)
+                break; 
+            
+            case Qdee_MusicName.PowerDown:
+                music.beginMelody(music.builtInMelody(Melodies.PowerDown), MelodyOptions.Once)
+                break; 
+        }
+
+    }
+     
+    /**
+     * Get light level
+     */
+    //% weight=46 blockId=qdee_getLightLevel block="Get|%port|light level(0~255)"
+    export function qdee_getLightLevel(port: LightPort): number
+    {
+        let value = 0;
+        switch (port)
+        {
+            case LightPort.port1:
+                value = pins.analogReadPin(AnalogPin.P1);
+                value = mapRGB(value, 0, 1023, 0, 255);
+                break;
+            
+            case LightPort.port6:
+                value = PA6_ad;
+                break;
+            
+            case LightPort.port8:
+                value = PB0_ad;
+                break;
+        }
+        return Math.round(255-value);
+     }
+     
+    /**
+     * Get soil humidity
+     */
+    //% weight=45 blockId="qdee_getsoilhumi" block="Qdee|port %port|get soil humidity"
+     export function qdee_getsoilhumi(port: LightPort): number {
+         let value: number = 0;
+         if (port == LightPort.port1) {
+             value = pins.analogReadPin(AnalogPin.P1);
+             value = mapRGB(value, 0, 1023, 0, 100);
+         }
+         else if (port == LightPort.port6) {
+             value = PA6_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
+         }
+         else if (port == LightPort.port8) {
+             value = PB0_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
+         }
+         return Math.round(value);
+     }
+     
+     
+     
+     
+     let ATH10_I2C_ADDR = 0x38;
+
+
+     function temp_i2cwrite(value: number): number {
+         let buf = pins.createBuffer(3);
+         buf[0] = value >> 8;
+         buf[1] = value & 0xff;
+         buf[2] = 0;
+         basic.pause(80);
+         let rvalue = pins.i2cWriteBuffer(ATH10_I2C_ADDR, buf);
+         // serial.writeString("writeback:");
+         // serial.writeNumber(rvalue);
+         // serial.writeLine("");
+         return rvalue;
+     }
+ 
+     function temp_i2cread(bytes: number): Buffer {
+         let val = pins.i2cReadBuffer(ATH10_I2C_ADDR, bytes);
+         return val;
+     }
+ 
+     function qdee_initTempHumiSensor(): boolean {
+         for (let i = 0; i < 10; i++) {
+             if (qdee_GetInitStatus()) {
+                 return true;
+             }
+             basic.pause(500);
+         }
+         serial.writeString("init erro");
+         return false;
+     }
+ 
+     function qdee_GetInitStatus(): boolean {
+         temp_i2cwrite(0xe108);
+         let value = temp_i2cread(1);
+         if ((value[0] & 0x68) == 0x08)
+             return true;
+         else
+             return false;
+     }
+ 
+     function qdee_getAc() {
+         temp_i2cwrite(0xac33);
+         basic.pause(100)
+         let value = temp_i2cread(1);
+         for (let i = 0; i < 100; i++) {
+             if ((value[0] & 0x80) != 0x80) {
+                 basic.pause(20)
+             }
+             else
+                 break;
+         }
+     }
+ 
+     function readTempHumi(select: Temp_humi): number {
+         while (!qdee_GetInitStatus()) {
+             basic.pause(30);
+         }
+         qdee_getAc();
+         let buf = temp_i2cread(6);
+         if (buf.length != 6) {
+             // serial.writeLine("444444")
+             return 0;
+         }
+        //  serial.writeString("buf[0]:");
+        //  serial.writeNumber(buf[0]);
+        //  serial.writeLine("");
+        //  serial.writeString("buf[1]:");
+        //  serial.writeNumber(buf[1]);
+        //  serial.writeLine("");
+        //  serial.writeString("buf[2]:");
+        //  serial.writeNumber(buf[2]);
+        //  serial.writeLine("");
+        //  serial.writeString("buf[3]:");
+        //  serial.writeNumber(buf[3]);
+        //  serial.writeLine("");
+        //  serial.writeString("buf[4]:");
+        //  serial.writeNumber(buf[4]);
+        //  serial.writeLine("");
+        //  serial.writeString("buf[5]:");
+        //  serial.writeNumber(buf[5]);
+        //  serial.writeLine("");
+ 
+         let humiValue: number = 0;
+         humiValue = (humiValue | buf[1]) << 8;
+         humiValue = (humiValue | buf[2]) << 8;
+         humiValue = humiValue | buf[3];
+         humiValue = humiValue >> 4;
+ 
+         let tempValue: number = 0;
+         tempValue = (tempValue | buf[3]) << 8;
+         tempValue = (tempValue | buf[4]) << 8;
+         tempValue = tempValue | buf[5];
+         tempValue = tempValue & 0xfffff;
+ 
+         if (select == Temp_humi.Temperature) {
+             tempValue = tempValue * 200 * 10 / 1024 / 1024 - 500;
+            //  serial.writeString("temp:");
+            //  serial.writeNumber(tempValue);
+            //  serial.writeLine("");
+             return Math.round(tempValue);
+         }
+         else {
+             humiValue = humiValue * 1000 / 1024 / 1024;
+            //  serial.writeString("humi:");
+            //  serial.writeNumber(humiValue);
+            //  serial.writeLine("");
+             return Math.round(humiValue);
+         }
+     }
+ 
+     /**
+       * Get sensor temperature and humidity
+       */
+     //% weight=44 blockId="qdee_gettemperature" block="Qdee|port %port|get %select"
+     export function qdee_gettemperature(port: TempSensor, select: Temp_humi): number {
+         return readTempHumi(select);
+     }
 
 }
