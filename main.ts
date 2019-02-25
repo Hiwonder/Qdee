@@ -562,7 +562,7 @@
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, Qdee_IOTCmdType.BUZZER);
                         qdee_sendSensorData(Qdee_IOTCmdType.BUZZER,arg1Int);
-                       // qdee_playMusic(arg1Int);
+                        qdee_playMusic(arg1Int);
                     }    
                 }
 
