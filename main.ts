@@ -2165,7 +2165,7 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
     }
 
     function temp_i2cread(): Buffer {
-        let val = pins.i2cReadBuffer(SHT3XD_ADDRESS, 6);
+        let val = pins.i2cReadBuffer(ATH10_I2C_ADDR, 6);
         return val;
     }
 
