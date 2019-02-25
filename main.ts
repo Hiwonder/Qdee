@@ -393,6 +393,7 @@
             basic.pause(30)
         }
         basic.pause(2000);
+        qdee_initTempHumiSensor();
         initExtPins();
     }
 
