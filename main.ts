@@ -2223,11 +2223,18 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
         serial.writeBuffer(buf);
      }
      
+    /**
+     *  The Melody of Little star   
+     */
+    //% weight=49 blockId=littleStarMelody block="Little star melody"
+    export function littleStarMelody(): string[] {
+        return ["C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "G4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "C4:4", "C4:4", "G4:4", "G4:4", "A4:4", "A4:4", "G4:4", "F4:4", "F4:4", "E4:4", "E4:4", "D4:4", "D4:4", "C4:4"];
+    }
         
     /**
      * Set Qdee play tone
      */
-    //% weight=49 blockId=qdee_playMusic block="Qdee play song|num %num|"
+    //% weight=48 blockId=qdee_playMusic block="Qdee play song|num %num|"
     export function qdee_playMusic(num: Qdee_MusicName) {
         switch (num)
         {
