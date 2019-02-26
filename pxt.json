@@ -17,5 +17,6 @@
     "testFiles": [
         "test.ts"
     ],
-    "public": true
+    "public": true,
+    "installedVersion": "github:hiwonder/qdee##v1.0.2"
 }
