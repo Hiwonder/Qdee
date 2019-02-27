@@ -4,8 +4,7 @@
     "description": "Blocks for Hiwonder Qdee",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "qdeeIot":"github:lobot-robot/qdee_iot"
+        "core": "*"
     },
     "files": [
         "README.md",
@@ -18,6 +17,5 @@
     "testFiles": [
         "test.ts"
     ],
-    "public": true,
-    "installedVersion": "github:hiwonder/qdee##v1.0.2"
+    "public": true
 }

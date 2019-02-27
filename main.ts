@@ -733,8 +733,8 @@ export function onQdee_getAngle(servo: Servos,body: Action) {
    buf[1] = 0x55;
    buf[2] = 0x04;
    buf[3] = 0x32;//cmd type
-   buf[4] = speed1;
-   buf[5] = speed2;
+   buf[4] = speed2;
+   buf[5] = speed1;
    serial.writeBuffer(buf);
 }
     
