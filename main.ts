@@ -1154,9 +1154,9 @@ namespace qdee {
     const AMBIENT_LIGHT = 1;
     const ALL = 7;
 
-    const red_wb = 2130;
-    const green_wb = 3500;
-    const blue_wb = 4620;
+    const red_wb = 2500;
+    const green_wb = 3900;
+    const blue_wb = 5820;
 
     function i2cwrite(reg: number, value: number) {
         let buf = pins.createBuffer(2);
