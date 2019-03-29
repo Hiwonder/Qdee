@@ -641,7 +641,7 @@ namespace qdee {
     /**
      * Send read qdee servos angle command
      */
-    //% weight=97 blockId=qdee_readAngle block="Send read|%servo|angle command "
+    //% weight=97 blockId=qdee_readAngle block="Read|%servo|angle command "
     //% subcategory=Control
     export function qdee_readAngle(servo: Servos): number {
         let buf = pins.createBuffer(6);
@@ -1089,7 +1089,7 @@ namespace qdee {
     /**
      *  Get Qdee current voltage,the unit is mV
     */
-    //% weight=84 blockGap=10 blockId=qdee_getBatVoltage block="Get Qdee current voltage (mV)"
+    //% weight=84  blockId=qdee_getBatVoltage block="Get Qdee current voltage (mV)"
     //% subcategory=Sensor
     export function qdee_getBatVoltage(): number {
         return currentVoltage;
@@ -1328,7 +1328,7 @@ namespace qdee {
     /**
      * Initialize the color sensor,please execute at boot time
      */
-    //% weight=83 blockId=qdee_init_colorSensor block="Initialize color sensor port at %port"
+    //% weight=83 blockGap=20 blockId=qdee_init_colorSensor block="Initialize color sensor port at %port"
     //% subcategory=Sensor
     export function qdee_init_colorSensor(port: colorSensorPort) {
         InitColor();
@@ -1399,7 +1399,7 @@ namespace qdee {
     /**
 	 *  Color sensor return the color.
 	 */
-    //% weight=81 blockGap=10 blockId=qdee_get_color block="color %color value(0~255)"
+    //% weight=81 blockId=qdee_get_color block="color %color value(0~255)"
     //% subcategory=Sensor
     export function qdee_get_color(color: qdee_RGBValue): number {
         let value = 0;
@@ -1439,7 +1439,7 @@ namespace qdee {
     /**
     * Get the condition of the line follower sensor
     */
-    //% weight=80 blockId=qdee_readLineFollowerStatus block="Line follower status|port %port|%status"
+    //% weight=80 blockGap=20 blockId=qdee_readLineFollowerStatus block="Line follower status|port %port|%status"
     //% subcategory=Sensor
     export function qdee_readLineFollowerStatus(port: lineFollowPort, status: qdee_lineFollower): boolean {
         let s1 = 0;
@@ -1492,7 +1492,7 @@ namespace qdee {
     /**
     * Get the condition of the touch button,press return 1,or return 0
     */
-    //% weight=76 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"    
+    //% weight=76 blockGap=20 blockId=qdee_touchButton block=" Touch button|port %port|is pressed"    
     //% subcategory=Sensor    
     export function qdee_touchButton(port: touchKeyPort): boolean {
         let status: boolean = false;

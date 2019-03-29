@@ -158,7 +158,7 @@
 	"qdee.qdee_belt_clearLight|block":"关闭灯带",
 	"qdee.Servos.Servo1|block":"舵机1",
 	"qdee.Servos.Servo2|block":"舵机2",
-	"qdee.qdee_readAngle|block":"发送读|%servo|角度命令",
+	"qdee.qdee_readAngle|block":"读|%servo|角度命令",
 	"qdee.getServosAngle|block":"获取|%servo|角度(-120~120)",
 	"qdee.onQdee_getAngle|block":"当读取到|%servo|角度时执行",
 	"qdee.qdee_show_expressions|block":"Qdee显示表情 %type",
