@@ -97,22 +97,6 @@ namespace qdee {
         //% block="Port 10"
         port10 = 0x0A
     }
-    export enum extPort {
-        //% block="Port 1"
-        port1 = 0x01,
-        //% block="Port 2"
-        port2 = 0x02,
-        //% block="Port 3"
-        port3 = 0x03,
-        //% block="Port 4"
-        port4 = 0x04,
-        //% block="Port 6"
-        port6 = 0x06,
-        //% block="Port 8"
-        port8 = 0x08,
-        //% block="Port 9"
-        port9 = 0x09,
-    }
 
     export enum knobPort {
         //% block="Port 1"
@@ -164,25 +148,12 @@ namespace qdee {
         adress_10 = 0xF5
     }
 
-    export enum QdeePinIOStatus {
-        //% block="Low"
-        Low = 0x00,
-        //% block="High"
-        Hight = 0x01
-    }
 
     export enum LineFollowerSensor {
         //% block="Sensor 1"
         LFSensor_1 = 0x00,
         //% block="Sensor 2"
         LFSensor_2 = 0x01
-    }
-
-    export enum SofaStatus {
-        //% block="vacation"
-        VACATION = 0x00,
-        //% block="occupied"
-        OCCUPIED = 0x01
     }
 
     export enum IRKEY {
@@ -298,12 +269,14 @@ namespace qdee {
         COMMAND_ERRO
     }
 
-    export enum AvoidSensor {
-        //% block="sensor 1"
-        Sensor_1 = 1,
-        //% block="sensor 2"
-        Sensor_2 = 2
-    }
+    export enum LightPort {
+        //% block="Port 1"
+        port1 = 0x01,
+       //% block="Port 6"
+        port6 = 0x06,     
+       //% block="Port 8"
+        port8 = 0x08            
+      }
 
     let versionNum: number = -1;//-1为未定义
     let readTimes: number = 0;
@@ -371,16 +344,17 @@ namespace qdee {
     let PB1_ad = 0;
 
     let MESSAGE_HEAD = 0xff;
-    let MESSAGE_MAC = 0x100;
-    let MESSAGE_ANGLE = 0x101;
-
-    let i2cPortValid: boolean = true;
-    let connectStatus: boolean = false;
+    let MESSAGE_IOT_HEAD = 0x102;
 
     let servo1Angle: number = 0xfff;
     let servo2Angle: number = 0xfff;
 
-    let macStr: string = "";
+    let MESSAGE_HEAD_LONG: number = 0x100;
+    let MESSAGE_HEAD_STOP: number = 0x101;
+
+    let cntIr = 0;
+    let adress = 0;
+    let sendFlag = false;
     /**
     * Get the handle command.
     */
@@ -393,83 +367,181 @@ namespace qdee {
         let index = findIndexof(handleCmd, "$", 0);
         if (index != -1) {
             let cmd: string = handleCmd.substr(0, index);
-            if (cmd.charAt(0).compare("A") == 0 && cmd.length == 13) {
-                let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                let arg5Int: number = strToNumber(cmd.substr(9, 2));
-                let arg6Int: number = strToNumber(cmd.substr(11, 2));
-
-                PA6_ad = arg1Int;
-                PA7_ad = arg2Int;
-                PB0_ad = arg3Int;
-                PB1_ad = arg4Int;
-
-                if (arg5Int != -1) {
-                    currentVoltage = arg5Int * 10353 / 200;
+            if (cmd.charAt(0).compare("A") == 0) {
+                if (cmd.length == 13)
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                    let arg5Int: number = strToNumber(cmd.substr(9, 2));
+                    let arg6Int: number = strToNumber(cmd.substr(11, 2));
+    
+                    PA6_ad = arg1Int;
+                    PA7_ad = arg2Int;
+                    PB0_ad = arg3Int;
+                    PB1_ad = arg4Int;   
+    
+                    if (arg5Int != -1)
+                    {
+                        currentVoltage = arg5Int*10353/200;
+                    }  
+    
+                    if (arg6Int != -1)
+                    {
+                        volume = arg6Int;
+                    }   
+                    
+                    PA6 = checkADPortValue(arg1Int);
+                    PA7 = checkADPortValue(arg2Int);
+                    PB0 = checkADPortValue(arg3Int);
+                    PB1 = checkADPortValue(arg4Int);
                 }
-
-                if (arg6Int != -1) {
-                    volume = arg6Int;
+                else if (cmd.length == 9)//彩灯颜色
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+     
+                    control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.LED_COLOR);
+                    
+                    if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
+                    {
+                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.LED_COLOR,arg1Int);
+                        qdee_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);   
+                    }    
                 }
-
-                PA6 = checkADPortValue(arg1Int);
-                PA7 = checkADPortValue(arg2Int);
-                PB0 = checkADPortValue(arg3Int);
-                PB1 = checkADPortValue(arg4Int);
 
             }
-            if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16) {
-                let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                let arg5Int: number = strToNumber(cmd.substr(9, 4));
-                let arg6Int: number = strToNumber(cmd.charAt(9));
-                let arg7Int: number = strToNumber(cmd.charAt(10));
-                let arg8Int: number = strToNumber(cmd.charAt(11));
-
-                PA6_ad = arg1Int;
-                PA7_ad = arg2Int;
-                PB0_ad = arg3Int;
-                PB1_ad = arg4Int;
-
-                PA6 = checkADPortValue(arg1Int);
-                PA7 = checkADPortValue(arg2Int);
-                PB0 = checkADPortValue(arg3Int);
-                PB1 = checkADPortValue(arg4Int);
-
-                if (arg5Int != -1) {
-                    let high = (arg5Int >> 8) & 0xff;
-                    let low = arg5Int & 0xff;
-                    if (low >= extAddress.adress_10 && low <= extAddress.adress_1) {
-                        control.raiseEvent(low, high);
+           else if (cmd.charAt(0).compare("B") == 0) {
+                if (cmd.length == 16)
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                    let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                    let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                    let arg5Int: number = strToNumber(cmd.substr(9, 4));
+                    let arg6Int: number = strToNumber(cmd.charAt(9));
+                    let arg7Int: number = strToNumber(cmd.charAt(10));
+                    let arg8Int: number = strToNumber(cmd.charAt(11));
+                    PA6_ad = arg1Int;
+                    PA7_ad = arg2Int;
+                    PB0_ad = arg3Int;
+                    PB1_ad = arg4Int;
+                    PA6 = checkADPortValue(arg1Int);
+                    PA7 = checkADPortValue(arg2Int);
+                    PB0 = checkADPortValue(arg3Int);
+                    PB1 = checkADPortValue(arg4Int);
+    
+                    if (arg5Int != -1) {
+                        let high = (arg5Int >> 8) & 0xff;
+                        let low = arg5Int & 0xff;
+                        if (high == 0)
+                        {
+                            if (adress != 0) {
+                                control.raiseEvent(MESSAGE_HEAD_STOP, 0);
+                            }    
+                            sendFlag = false;
+                            adress = 0;
+                        }
+                        else
+                        {
+                            if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
+                            {
+                                control.raiseEvent(low, high);
+                            }
+                            else if (low == 0xff)
+                            {
+                                if (adress != high) {
+                                    if (!sendFlag) {
+                                        control.raiseEvent(MESSAGE_HEAD, high);
+                                        sendFlag = true;
+                                    }
+                                    adress = high
+                                }
+                                else {
+                                    cntIr++;
+                                }
+                                if (cntIr >= 3) {
+                                    cntIr = 0;
+                                    control.raiseEvent(MESSAGE_HEAD_LONG, high);
+                                }
+                            }                                   
+                        }
                     }
-                    else if (low == 0xff) {
-                        control.raiseEvent(MESSAGE_HEAD, high);
+                    if (arg6Int != -1) {
+                        PC13 = arg6Int;
                     }
+                    if (arg7Int != -1) {
+                        PB11 = arg7Int;
+                    }
+                    if (arg8Int != -1) {
+                        PB10 = arg8Int;
+                    }    
+                }
+                else if (cmd.length == 3)
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    if (arg1Int != -1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.BUZZER);
+                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.BUZZER,arg1Int);
+                        qdee_iot.qdee_playMusic(arg1Int);
+                    }  
+                }
 
-                }
-                if (arg6Int != -1) {
-                    PC13 = arg6Int;
-                }
-                if (arg7Int != -1) {
-                    PB11 = arg7Int;
-                }
-                if (arg8Int != -1) {
-                    PB10 = arg8Int;
+            }
+           else if (cmd.charAt(0).compare("C") == 0) {
+                if (cmd.length == 3)//显示
+                {
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    if (arg1Int != -1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SHOW);
+                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.SHOW,arg1Int);
+                        qdee_iot.qdee_show_expressions(arg1Int);
+                    }    
                 }
             }
-            if (cmd.charAt(0).compare("C") == 0 && cmd.length == 11) {
-                if (lhRGBLightBelt != null) {
-                    for (let i = 0; i < 10; i++) {
-                        let color = converOneChar(cmd.charAt(i + 1));
-                        if (color != -1)
-                            lhRGBLightBelt.setBeltPixelColor(i, color);
-                    }
-                    lhRGBLightBelt.show();
+            else if (cmd.charAt(0).compare("E") == 0)//远程遥控按键
+            {
+                if (cmd.length == 3)//显示
+                {
+                    music.playTone(988, music.beat(BeatFraction.Quarter));
+                    let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                    if (arg1Int != -1)
+                    {
+                        music.playTone(392, music.beat(BeatFraction.Quarter));
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.IR_REMOTE);
+                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.IR_REMOTE, arg1Int);
+                        qdee_send_learn_data(arg1Int);
+                    }      
                 }
+            }
+            else if (cmd.charAt(0).compare("F") == 0 && cmd.length == 1)//查询音量
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SOUND);
+            }
+            else if (cmd.charAt(0).compare("G") == 0 && cmd.length == 1)//查询光线
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.LIGHT);
+            }
+            else if (cmd.charAt(0).compare("H") == 0 && cmd.length == 1)//查询温度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.TEMP);
+            }
+            else if (cmd.charAt(0).compare("I") == 0 && cmd.length == 1)//查询湿度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.HUMI);
+            }
+            else if (cmd.charAt(0).compare("J") == 0 && cmd.length == 1)//查询土壤湿度
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SOIL_HUMI);
+            }   
+            else if (cmd.charAt(0).compare("K") == 0 && cmd.length == 1)//查询超声波
+            {
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.ULTRASONIC);
             }
             if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
@@ -544,19 +616,6 @@ namespace qdee {
                 return -1;
             if (i > 0)
                 num *= 16;
-            num += tmp;
-        }
-        return num;
-    }
-
-    function decStrToNumber(str: string): number {
-        let num: number = 0;
-        for (let i = 0; i < str.length; i++) {
-            let tmp: number = converOneChar(str.charAt(i));
-            if (tmp == -1)
-                return -1;
-            if (i > 0)
-                num *= 10;
             num += tmp;
         }
         return num;
@@ -746,167 +805,13 @@ namespace qdee {
         }
     }
     
-    
-    /**
-   * Set the Qdee show facial expressions
-   */
-    //% weight=94 blockId=qdee_show_expressions block="Qdee show facial expressions %type"
-    //% subcategory=Control
-    export function qdee_show_expressions(type: number) {
-        switch (type) {
-            case 0:
-                basic.showLeds(`
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
-            . . . . .
-            `)
-                break;
-
-            case 1:
-                basic.showIcon(IconNames.Heart);
-                break;
-
-            case 2:
-                basic.showIcon(IconNames.Yes);
-                break;
-
-            case 3:
-                basic.showIcon(IconNames.No);
-                break;
-
-            case 4:
-                basic.showIcon(IconNames.Happy)
-                break;
-
-            case 5:
-                basic.showIcon(IconNames.Sad)
-                break;
-
-            case 6:
-                basic.showIcon(IconNames.Angry)
-                break;
-
-            case 7:
-                basic.showLeds(`
-            . . # . .
-            . # # # .
-            # . # . #
-            . . # . .
-            . . # . .
-            `)
-                break;
-
-            case 8:
-                basic.showLeds(`
-            . . # . .
-            . . # . .
-            # . # . #
-            . # # # .
-            . . # . .
-            `)
-                break;
-
-            case 9:
-                basic.showLeds(`
-            . . # . .
-            . # . . .
-            # # # # #
-            . # . . .
-            . . # . .
-            `)
-                break;
-
-            case 10:
-                basic.showLeds(`
-            . . # . .
-            . . . # .
-            # # # # #
-            . . . # .
-            . . # . .
-            `)
-                break;
-
-        }
-    }
-
-    /**
-     * Set Qdee play tone
-     */
-    //% weight=93 blockId=qdee_playTone block="Qdee play |tone %tone|and beats %rhythm"
-    //% subcategory=Control
-    export function qdee_playTone(tone: number, rhythm: number) {
-        let toneNum: number = 0;
-        let beat: number;
-        switch (tone) {
-            case 1:
-                toneNum = 523;
-                break;
-
-            case 2:
-                toneNum = 587;
-                break;
-
-            case 3:
-                toneNum = 659;
-                break;
-
-            case 4:
-                toneNum = 698;
-                break;
-
-            case 5:
-                toneNum = 784;
-                break;
-
-            case 6:
-                toneNum = 880;
-                break;
-
-            case 7:
-                toneNum = 998;
-                break;
-
-            case 8:
-                toneNum = 1047;
-                break;
-        }
-
-        switch (rhythm) {
-            case 1:
-                beat = music.beat(BeatFraction.Eighth);
-                break;
-
-            case 2:
-                beat = music.beat(BeatFraction.Quarter);
-                break;
-
-            case 3:
-                beat = music.beat(BeatFraction.Half);
-                break;
-
-            case 4:
-                beat = music.beat(BeatFraction.Whole);
-                break;
-
-            case 5:
-                beat = music.beat(BeatFraction.Double);
-                break;
-        }
-
-        music.playTone(toneNum, beat);
-
-    }
-
-
     /**
      * Do someting when Qdee receive custom ir code
      * @param address the message id
      * @param code the button that needs to be pressed
      * @param body code to run when event is raised
      */
-    //% weight=92 blockId=onQdee_custom_ir_pressed block="on ir receive|%address|code %code"
+    //% weight=94 blockId=onQdee_custom_ir_pressed block="on ir receive|%address|code %code"
     //% subcategory=IR
     export function onQdee_custom_ir_pressed(address: extAddress, code: number, body: Action) {
         control.onEvent(address, code, body);
@@ -915,7 +820,7 @@ namespace qdee {
     /**
     * Let Qdee send ir custom data
     */
-    //% weight=91 blockId=qdee_send_ir_data block="Let Qdee send custom ir|%address|code %num"
+    //% weight=93 blockId=qdee_send_ir_data block="Let Qdee send custom ir|%address|code %num"
     //% num.min=0 num.max=254  
     //% subcategory=IR
     export function qdee_send_ir_data(address: extAddress, num: number) {
@@ -938,10 +843,32 @@ namespace qdee {
      * @param code the ir key button that needs to be pressed
      * @param body code to run when event is raised
      */
-    //% weight=90 blockId=onQdee_remote_ir_pressed block="on remote-control|%code|pressed"
+    //% weight=92 blockId=onQdee_remote_ir_pressed block="on remote-control|%code|pressed"
     //% subcategory=IR
     export function onQdee_remote_ir_pressed(code: IRKEY, body: Action) {
         control.onEvent(MESSAGE_HEAD, code, body);
+}
+    
+    /**
+     * Do someting when remote-control longpress
+     * @param code the ir key button that needs to be pressed
+     * @param body code to run when event is raised
+     */
+    //% weight=91 blockId=onQdee_remote_ir_longpressed block="on remote-control|%code|long pressed"
+    //% subcategory=IR
+    export function onQdee_remote_ir_longpressed(code: IRKEY, body: Action) {
+        control.onEvent(MESSAGE_HEAD_LONG, code, body);
+    }
+
+    /**
+     * Do someting when remote-control stop send
+     * @param code the ir key button that needs to be pressed
+     * @param body code to run when event is raised
+     */
+    //% weight=90 blockId=onQdee_remote_no_ir block="on remote-control stop send"
+    //% subcategory=IR    
+    export function onQdee_remote_no_ir(body: Action) {
+        control.onEvent(MESSAGE_HEAD_STOP, 0, body);
     }
 
     /**
@@ -1316,15 +1243,6 @@ namespace qdee {
         val |= enable;
         i2cwrite(APDS9960_ENABLE, val);
     }
-
-    function readAmbientLight(): number {
-        let val = i2cread(APDS9960_CDATAL);
-        let val_byte = i2cread(APDS9960_CDATAH);
-        val = val + val_byte * 256;
-        return val;
-    }
-
-
     /**
      * Initialize the color sensor,please execute at boot time
      */
@@ -1347,15 +1265,6 @@ namespace qdee {
         let g = i2cread(APDS9960_GDATAL) + i2cread(APDS9960_GDATAH) * 256;
         let b = i2cread(APDS9960_BDATAL) + i2cread(APDS9960_BDATAH) * 256;
 
-        // serial.writeNumber(c);
-        // serial.writeLine("->ccc");
-        // serial.writeNumber(r);
-        // serial.writeLine("->red");
-        // serial.writeNumber(g);
-        // serial.writeLine("->green");
-        // serial.writeNumber(b);
-        // serial.writeLine("->blue");
-
         if (r > red_wb)
             r = red_wb;
         if (g > green_wb)
@@ -1366,15 +1275,8 @@ namespace qdee {
         r = Math.round(mapRGB(r, 0, red_wb, 0, 255));
         g = Math.round(mapRGB(g, 0, green_wb, 0, 255));
         b = Math.round(mapRGB(b, 0, blue_wb, 0, 255));
-        // serial.writeNumber(r);
-        // serial.writeLine("->rred");
-        // serial.writeNumber(g);
-        // serial.writeLine("->ggreen");
-        // serial.writeNumber(b);
-        // serial.writeLine("->bblue");
-        let hsv = rgb2hue(r, g, b);
-        // serial.writeNumber(hsv);
-        // serial.writeLine("->hsv");
+
+        let hsv = rgb2hue(r, g, b)
         let t = qdee_Colors.None;
         if (c > 2200 && r > 65 && g > 65 && b > 65) {
             t = qdee_Colors.White;
@@ -1594,7 +1496,7 @@ namespace qdee {
     /**
     * Get the ad value of the knob moudule
     */
-    //% weight=72 blockId=qdee_getKnobValue blockGap=50 block="Get knob|port %port|value(0~255)"
+    //% weight=73 blockId=qdee_getKnobValue blockGap=50 block="Get knob|port %port|value(0~255)"
     //% subcategory=Sensor    
     export function qdee_getKnobValue(port: knobPort): number {
         let adValue = 0;
@@ -1612,6 +1514,54 @@ namespace qdee {
         }
         return adValue;
     }
+
+    /**
+     * Get light level
+     */
+    //% weight=72 blockId=qdee_getLightLevel block="Get|%port|light level(0~255)"
+    //% subcategory=Sensor   
+    export function qdee_getLightLevel(port: LightPort): number
+    {
+        let value = 0;
+        switch (port)
+        {
+            case LightPort.port1:
+                value = pins.analogReadPin(AnalogPin.P1);
+                value = mapRGB(value, 0, 1023, 0, 255);
+                break;
+            
+            case LightPort.port6:
+                value = PA6_ad;
+                break;
+            
+            case LightPort.port8:
+                value = PB0_ad;
+                break;
+        }
+        return Math.round(255-value);
+     }
+     
+    /**
+     * Get soil humidity
+     */
+    //% weight=71 blockId="qdee_getsoilhumi" block="Qdee|%port|get soil humidity"
+    //% subcategory=Sensor 
+     export function qdee_getsoilhumi(port: LightPort): number {
+         let value: number = 0;
+         if (port == LightPort.port1) {
+             value = pins.analogReadPin(AnalogPin.P1);
+             value = mapRGB(value, 0, 1023, 0, 100);
+         }
+         else if (port == LightPort.port6) {
+             value = PA6_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
+         }
+         else if (port == LightPort.port8) {
+             value = PB0_ad;
+             value = mapRGB(value, 0, 255, 0, 100);
+         }
+         return Math.round(value);
+     }
 
     /**
      * Set extension pins output high/low
@@ -1815,6 +1765,11 @@ namespace qdee {
     //% subcategory=Coloured_lights    
     export function qdee_setPixelRGBArgs(lightoffset: QdeeLights, rgb: number) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
+    }
+
+
+    function qdee_setPixelRGBSerial(lightoffset: number, r: number, g: number, b: number) {
+        lhRGBLight.setPixelColorRGB(lightoffset, r, g, b);
     }
 
 
