@@ -550,13 +550,15 @@ namespace qdee {
                 {
                     if (arg1Int == 1)
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON);
-                        qdee_setMotorSpeed(80,80);
+                        //control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON);
+                        qdee_setMotorSpeed(80, 80);
+                        basic.pause(50);
                     }
                     else if (arg1Int == 0)
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_OFF);
-                        qdee_setMotorSpeed(0,0);
+                       // control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_OFF);
+                        qdee_setMotorSpeed(0, 0);
+                        basic.pause(50);
                     }
                     qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON, arg1Int);
                     
