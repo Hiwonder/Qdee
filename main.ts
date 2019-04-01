@@ -404,11 +404,11 @@ namespace qdee {
                     let arg3Int: number = strToNumber(cmd.substr(5, 2));
                     let arg4Int: number = strToNumber(cmd.substr(7, 2));
      
-                    control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.LED_COLOR);
+                    control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.LED_COLOR);
                     
                     if (arg1Int != -1 && arg2Int != -1 && arg3Int != -1 && arg4Int != -1)
                     {
-                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.LED_COLOR,arg1Int);
+                        qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.LED_COLOR,arg1Int);
                         qdee_setPixelRGBSerial(arg1Int, arg2Int, arg3Int, arg4Int);   
                     }    
                 }
@@ -485,9 +485,9 @@ namespace qdee {
                     let arg1Int: number = strToNumber(cmd.substr(1, 2));
                     if (arg1Int != -1)
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.BUZZER);
-                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.BUZZER,arg1Int);
-                        qdee_iot.qdee_playMusic(arg1Int);
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.BUZZER);
+                        qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.BUZZER,arg1Int);
+                        qdeeiot.qdee_playMusic(arg1Int);
                     }  
                 }
 
@@ -498,9 +498,9 @@ namespace qdee {
                     let arg1Int: number = strToNumber(cmd.substr(1, 2));
                     if (arg1Int != -1)
                     {
-                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SHOW);
-                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.SHOW,arg1Int);
-                        qdee_iot.qdee_show_expressions(arg1Int);
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.SHOW);
+                        qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.SHOW,arg1Int);
+                        qdeeiot.qdee_show_expressions(arg1Int);
                     }    
                 }
             }
@@ -513,36 +513,53 @@ namespace qdee {
                     if (arg1Int != -1)
                     {
                         music.playTone(392, music.beat(BeatFraction.Quarter));
-                        control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.IR_REMOTE);
-                        qdee_iot.qdee_sendSensorData(qdee_iot.Qdee_IOTCmdType.IR_REMOTE, arg1Int);
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.IR_REMOTE);
+                        qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.IR_REMOTE, arg1Int);
                         qdee_send_learn_data(arg1Int);
                     }      
                 }
             }
             else if (cmd.charAt(0).compare("F") == 0 && cmd.length == 1)//查询音量
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SOUND);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.SOUND);
             }
             else if (cmd.charAt(0).compare("G") == 0 && cmd.length == 1)//查询光线
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.LIGHT);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.LIGHT);
             }
             else if (cmd.charAt(0).compare("H") == 0 && cmd.length == 1)//查询温度
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.TEMP);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.TEMP);
             }
             else if (cmd.charAt(0).compare("I") == 0 && cmd.length == 1)//查询湿度
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.HUMI);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.HUMI);
             }
             else if (cmd.charAt(0).compare("J") == 0 && cmd.length == 1)//查询土壤湿度
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.SOIL_HUMI);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.SOIL_HUMI);
             }   
             else if (cmd.charAt(0).compare("K") == 0 && cmd.length == 1)//查询超声波
             {
-                control.raiseEvent(MESSAGE_IOT_HEAD, qdee_iot.Qdee_IOTCmdType.ULTRASONIC);
+                control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.ULTRASONIC);
             }
+            else if (cmd.charAt(0).compare("L") == 0 && cmd.length == 2)//水泵
+            {
+                let arg1Int: number = strToNumber(cmd.substr(1, 1));
+                if (arg1Int != -1)
+                {
+                    if (arg1Int == 1)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON);
+                        
+                    }
+                    else if (arg1Int == 0)
+                    {
+                        control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_OFF);
+                    }
+                    qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.SHOW,arg1Int);
+                }    
+            }            
             if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
             }
