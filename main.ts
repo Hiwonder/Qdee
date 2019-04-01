@@ -557,7 +557,7 @@ namespace qdee {
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_OFF);
                     }
-                    qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.SHOW,arg1Int);
+                    qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON,arg1Int);
                 }    
             }            
             if (cmd.compare("IROK") == 0) {
