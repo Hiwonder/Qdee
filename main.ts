@@ -556,9 +556,10 @@ namespace qdee {
                     else if (arg1Int == 0)
                     {
                         control.raiseEvent(MESSAGE_IOT_HEAD, qdeeiot.Qdee_IOTCmdType.WATERPUMP_OFF);
+                        qdee_setMotorSpeed(0,0);
                     }
                     qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON, arg1Int);
-                    qdee_setMotorSpeed(0,0);
+                    
                 }    
             }            
             if (cmd.compare("IROK") == 0) {
