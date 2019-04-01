@@ -5,7 +5,7 @@
     "license": "MIT",
     "dependencies": {
         "core": "*",
-        "QdeeIoT": "github:LOBOT-ROBOT/QdeeIoT"
+        "QdeeIoT": "github:Hiwonder/QdeeIoT"
     },
     "files": [
         "README.md",
