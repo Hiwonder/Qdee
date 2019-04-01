@@ -560,7 +560,7 @@ namespace qdee {
                         qdee_setMotorSpeed(0, 0);
                         basic.pause(50);
                     }
-                    qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON, arg1Int);
+                  //  qdeeiot.qdee_sendSensorData(qdeeiot.Qdee_IOTCmdType.WATERPUMP_ON, arg1Int);
                     
                 }    
             }            
