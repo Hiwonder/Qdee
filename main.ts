@@ -296,6 +296,43 @@ namespace qdee {
         initExtPins();
     }
 
+    /**
+     * Initialize the color sensor,please execute at boot time
+     */
+    //% weight=99 blockId=qdee_init_colorSensor block="Initialize color sensor port at %port"
+    //% subcategory=Init
+    export function qdee_init_colorSensor(port: colorSensorPort) {
+        InitColor();
+        enableLightSensor(true);
+        control.waitMicros(100);
+    }
+   
+    /**
+	 * Initialize Light belt
+	 */
+    //% weight=98 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
+    //% subcategory=Init
+    export function qdee_belt_initRGBLight(port: lightbeltPort) {
+        switch (port) {
+            case lightbeltPort.port1:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P1, 30, QdeeRGBPixelMode.RGB);
+                }
+                break;
+            case lightbeltPort.port2:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P13, 30, QdeeRGBPixelMode.RGB);
+                }
+                break;
+            case lightbeltPort.port3:
+                if (!lhRGBLightBelt) {
+                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P16, 30, QdeeRGBPixelMode.RGB);
+                }
+                break;
+        }
+        qdee_clearLight();
+    }
+
     function sendVersionCmd() {
         let buf = pins.createBuffer(4);
         buf[0] = 0x55;
@@ -1235,17 +1272,6 @@ namespace qdee {
         i2cwrite(APDS9960_ENABLE, val);
     }
     /**
-     * Initialize the color sensor,please execute at boot time
-     */
-    //% weight=99 blockGap=20 blockId=qdee_init_colorSensor block="Initialize color sensor port at %port"
-    //% subcategory=Init
-    export function qdee_init_colorSensor(port: colorSensorPort) {
-        InitColor();
-        enableLightSensor(true);
-        control.waitMicros(100);
-    }
-
-    /**
 	 *  Color sensor return the color.
 	 */
     //% weight=62 blockId=qdee_checkCurrentColor block="Current color %color"
@@ -1727,35 +1753,9 @@ namespace qdee {
     }
 
     /**
-	 * Initialize Light belt
-	 */
-    //% weight=98 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
-    //% subcategory=Init
-    export function qdee_belt_initRGBLight(port: lightbeltPort) {
-        switch (port) {
-            case lightbeltPort.port1:
-                if (!lhRGBLightBelt) {
-                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P1, 30, QdeeRGBPixelMode.RGB);
-                }
-                break;
-            case lightbeltPort.port2:
-                if (!lhRGBLightBelt) {
-                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P13, 30, QdeeRGBPixelMode.RGB);
-                }
-                break;
-            case lightbeltPort.port3:
-                if (!lhRGBLightBelt) {
-                    lhRGBLightBelt = QdeeRGBLight.create(DigitalPin.P16, 30, QdeeRGBPixelMode.RGB);
-                }
-                break;
-        }
-        qdee_clearLight();
-    }
-
-    /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
-    //% weight=20 blockId=qdee_belt_setPixelRGB block="Set light belt|%lightoffset|color to %rgb"
+    //% weight=20 blockGap=20 blockId=qdee_belt_setPixelRGB block="Set light belt|%lightoffset|color to %rgb"
     //% subcategory=Coloured_lights    
     export function qdee_belt_setPixelRGB(lightoffset: QdeeLightsBelt, rgb: QdeeRGBColors) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
