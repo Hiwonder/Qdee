@@ -126,7 +126,6 @@ namespace QdeeRGBLight {
             }
             
         }
-
         singleSetBeltPixelColor(pixeloffset: number, rgb: QdeeRGBColors): void {
             this.setPixelRGB(pixeloffset, rgb);
         }
@@ -153,7 +152,6 @@ namespace QdeeRGBLight {
             }
             this.show();
         }
-
 
         private setPixelRGBValue(pixeloffset: number, r: number, g: number, b: number): void {
             let stride = this._mode === QdeeRGBPixelMode.RGBW ? 4 : 3;

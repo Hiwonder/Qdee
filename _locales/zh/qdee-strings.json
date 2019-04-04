@@ -156,11 +156,6 @@
 	"qdee.qdee_send_remote_phone_data|block":"Qdee发送手机遥控码 %data",
 	"qdee.qdee_belt_setPixelRGBSingle|block":"设置灯带灯索引(0~29)|%lightoffset|颜色 %rgb(1~9)",
 	"qdee.qdee_belt_setPixelRGBSingleRGBIndex|block":"设置灯带索引(0~29)|%lightoffset|颜色编号 %rgb(1~9)",
-	"qdee.qdee_getLightLevel|block":"获取|%port|亮度等级(0~255)",
-	"qdee.qdee_getsoilhumi|block":" 土壤传感器|%port|湿度",
-	"qdee.LightPort.por1|block":"接口1",
-	"qdee.LightPort.por6|block":"接口6",
-	"qdee.LightPort.por8|block":"接口8",
 	"qdee.onQdee_remote_ir_longpressed|block":"当遥控器|%code|按键长按",
 	"qdee.onQdee_remote_no_ir|block":"当遥控器停止按下"
 }
