@@ -386,7 +386,8 @@ namespace qdee {
                 PB0 = checkADPortValue(arg3Int);
                 PB1 = checkADPortValue(arg4Int);
             }
-            else if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16) {
+            else if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16)
+            {
                 let arg1Int: number = strToNumber(cmd.substr(1, 2));
                 let arg2Int: number = strToNumber(cmd.substr(3, 2));
                 let arg3Int: number = strToNumber(cmd.substr(5, 2));
