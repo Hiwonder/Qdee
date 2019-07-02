@@ -1662,7 +1662,7 @@ namespace qdee {
     /**
      * Convert the sound value to the standard command and send it to the mobile phone. (0~255).
      */
-    //% weight=36 blockId=qdee_convertLight block="Convert sound %data"
+    //% weight=36 blockId=qdee_convertSound block="Convert sound %data"
     //% subcategory=Bluetooth
     export function qdee_convertSound(data: number): string {
         let cmdStr: string = "CMD|05|";
