@@ -411,7 +411,7 @@ namespace qdee {
     
                  if (arg5Int != -1)
                  {
-                    currentVoltage = arg5Int*10353/200;
+                    currentVoltage = Math.round(arg5Int*10353/200);
                  }  
     
                  if (arg6Int != -1)
@@ -730,7 +730,7 @@ namespace qdee {
             speed = 100;
         else if (speed < -100)
             speed = -100;
-        speed = speed * 1023 / 100;
+        speed = Math.round(speed * 1023 / 100);
         if (speed > 0)//正转
         {
             pin1Clock = speed;
@@ -1401,10 +1401,10 @@ namespace qdee {
         s2 = s2 * 255 / 1023;
 
         if (sensor == LineFollowerSensor.LFSensor_1) {
-            return 255 - s1;
+            return Math.round(255 - s1);
         }
         else {
-            return 255 - s2;
+            return Math.round(255 - s2);
         }
 
     }
@@ -1529,7 +1529,7 @@ namespace qdee {
                 adValue = PB0_ad;
                 break;
         }
-        return adValue;
+        return Math.round(adValue);
     }
     
     /**
