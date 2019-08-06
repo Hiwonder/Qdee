@@ -1367,11 +1367,11 @@ namespace qdee {
         s1 = pins.analogReadPin(AnalogPin.P1);
         s2 = pins.analogReadPin(AnalogPin.P2);
 
-        if (s1 < 980)
+        if (s1 < 900)
             s1 = 0;
         else
             s1 = 1;
-        if (s2 < 980)
+        if (s2 < 900)
             s2 = 0;
         else
             s2 = 1;
