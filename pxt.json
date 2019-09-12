@@ -12,7 +12,8 @@
         "QdeeRGBLight.ts",
         "sendbuffer.asm",
         "_locales/zh/qdee-strings.json",
-        "_locales/zh/qdee-jsdoc-strings.json"
+        "_locales/zh/qdee-jsdoc-strings.json",
+        "_locales/ko/qdee-strings.json"
     ],
     "testFiles": [
         "test.ts"
