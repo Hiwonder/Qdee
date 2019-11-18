@@ -492,7 +492,7 @@ namespace qdee {
         if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
         }
-        if (cmd.charAt(0).compare("V") == 0 && cmd.length == 4) {
+        if (cmd.charAt(0).compare("V") == 0 && cmd.length > 3) {
                 let arg1Int: number = strToNumber(cmd.substr(1, 1));
                 let arg2Int: number = strToNumber(cmd.substr(3, 1));
                 if (arg1Int != -1 && arg2Int != -1) {
