@@ -1304,7 +1304,7 @@ namespace qdee {
             else if (hsv > 60 && hsv < 170) {
                 t = qdee_Colors.Green;
             }
-            else if (hsv > 210 && hsv < 230) {
+            else if (hsv > 195 && hsv < 230) {
                 t = qdee_Colors.Blue;
             }
         }
