@@ -19,13 +19,4 @@
         "test.ts"
     ],
     "public": true,
-    "yotta": {
-        "config": {
-            "Hiwonder": {
-                "Qdee": {
-                    "enabled": 1
-                }
-            }
-        }
-    }
 }
