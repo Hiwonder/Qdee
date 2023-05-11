@@ -1696,7 +1696,10 @@ namespace qdee {
     /**
 	 * Initialize RGB
 	 */
-    function qdee_initRGBLight() {
+    //% blockId="qdee_initRGBLight" block="Initialize RGB led"
+    //% weight=31
+    //% subcategory=Coloured_lights
+    export function qdee_initRGBLight() {
         if (!lhRGBLight) {
             lhRGBLight = QdeeRGBLight.create(DigitalPin.P15, 6, QdeeRGBPixelMode.RGB);
         }
