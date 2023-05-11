@@ -25,7 +25,7 @@ namespace qdee {
         //% block="Green"
         Green = 0x02,
         //% block="Blue"
-        Blue = 0x03  
+        Blue = 0x03
     }
 
     export enum extPins {
@@ -306,10 +306,10 @@ namespace qdee {
         enableLightSensor(true);
         control.waitMicros(100);
     }
-   
+
     /**
-	 * Initialize Light belt
-	 */
+     * Initialize Light belt
+     */
     //% weight=98 blockId=qdee_belt_initRGBLight block="Initialize light belt at port %port"
     //% subcategory=Init
     export function qdee_belt_initRGBLight(port: lightbeltPort) {
@@ -397,35 +397,32 @@ namespace qdee {
         if (index != -1) {
             let cmd: string = handleCmd.substr(0, index);
             if (cmd.charAt(0).compare("A") == 0 && cmd.length == 13) {
-                 let arg1Int: number = strToNumber(cmd.substr(1, 2));
-                 let arg2Int: number = strToNumber(cmd.substr(3, 2));
-                 let arg3Int: number = strToNumber(cmd.substr(5, 2));
-                 let arg4Int: number = strToNumber(cmd.substr(7, 2));
-                 let arg5Int: number = strToNumber(cmd.substr(9, 2));
-                 let arg6Int: number = strToNumber(cmd.substr(11, 2));
-    
-                 PA6_ad = arg1Int;
-                 PA7_ad = arg2Int;
-                 PB0_ad = arg3Int;
-                 PB1_ad = arg4Int;   
-    
-                 if (arg5Int != -1)
-                 {
-                    currentVoltage = Math.round(arg5Int*10353/200);
-                 }  
-    
-                 if (arg6Int != -1)
-                 {
-                  volume = arg6Int;
-                 }   
-                
+                let arg1Int: number = strToNumber(cmd.substr(1, 2));
+                let arg2Int: number = strToNumber(cmd.substr(3, 2));
+                let arg3Int: number = strToNumber(cmd.substr(5, 2));
+                let arg4Int: number = strToNumber(cmd.substr(7, 2));
+                let arg5Int: number = strToNumber(cmd.substr(9, 2));
+                let arg6Int: number = strToNumber(cmd.substr(11, 2));
+
+                PA6_ad = arg1Int;
+                PA7_ad = arg2Int;
+                PB0_ad = arg3Int;
+                PB1_ad = arg4Int;
+
+                if (arg5Int != -1) {
+                    currentVoltage = Math.round(arg5Int * 10353 / 200);
+                }
+
+                if (arg6Int != -1) {
+                    volume = arg6Int;
+                }
+
                 PA6 = checkADPortValue(arg1Int);
                 PA7 = checkADPortValue(arg2Int);
                 PB0 = checkADPortValue(arg3Int);
                 PB1 = checkADPortValue(arg4Int);
             }
-            else if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16)
-            {
+            else if (cmd.charAt(0).compare("B") == 0 && cmd.length == 16) {
                 let arg1Int: number = strToNumber(cmd.substr(1, 2));
                 let arg2Int: number = strToNumber(cmd.substr(3, 2));
                 let arg3Int: number = strToNumber(cmd.substr(5, 2));
@@ -445,22 +442,18 @@ namespace qdee {
                 if (arg5Int != -1) {
                     let high = (arg5Int >> 8) & 0xff;
                     let low = arg5Int & 0xff;
-                    if (high == 0)
-                    {
+                    if (high == 0) {
                         if (adress != 0) {
                             control.raiseEvent(MESSAGE_HEAD_STOP, 0);
-                        }    
+                        }
                         sendFlag = false;
                         adress = 0;
                     }
-                    else
-                    {
-                        if (low >= extAddress.adress_10 && low <= extAddress.adress_1)
-                        {
+                    else {
+                        if (low >= extAddress.adress_10 && low <= extAddress.adress_1) {
                             control.raiseEvent(low, high);
                         }
-                        else if (low == 0xff)
-                        {
+                        else if (low == 0xff) {
                             if (adress != high) {
                                 if (!sendFlag) {
                                     control.raiseEvent(MESSAGE_HEAD, high);
@@ -475,7 +468,7 @@ namespace qdee {
                                 cntIr = 0;
                                 control.raiseEvent(MESSAGE_HEAD_LONG, high);
                             }
-                        }                                   
+                        }
                     }
                 }
                 if (arg6Int != -1) {
@@ -486,20 +479,20 @@ namespace qdee {
                 }
                 if (arg8Int != -1) {
                     PB10 = arg8Int;
-                }    
+                }
 
-        }
-        if (cmd.compare("IROK") == 0) {
+            }
+            if (cmd.compare("IROK") == 0) {
                 music.playTone(988, music.beat(BeatFraction.Quarter));
-        }
-        if (cmd.charAt(0).compare("V") == 0 && cmd.length > 3) {
+            }
+            if (cmd.charAt(0).compare("V") == 0 && cmd.length > 3) {
                 let arg1Int: number = strToNumber(cmd.substr(1, 1));
                 let arg2Int: number = strToNumber(cmd.substr(3, 1));
                 if (arg1Int != -1 && arg2Int != -1) {
                     versionNum = arg1Int * 10 + arg2Int;
                 }
-        }
-        if (cmd.charAt(0).compare("S") == 0 && cmd.length == 5) {
+            }
+            if (cmd.charAt(0).compare("S") == 0 && cmd.length == 5) {
                 let arg1Int: number = strToNumber(cmd.substr(1, 1));
                 let arg2Str = cmd.substr(2, 3);
                 if (arg2Str.compare("XXX") == 0) {
@@ -715,7 +708,7 @@ namespace qdee {
         buf[5] = speed1;
         serial.writeBuffer(buf);
     }
-    
+
     /**
    * Set fan speed
    * @param speed the speed of the fan in -100~100. eg: 80
@@ -757,64 +750,63 @@ namespace qdee {
     //% type.min=0 type.max=10
     //% subcategory=Control
     export function qdee_show_expressions(type: number) {
-        switch (type)
-        {
+        switch (type) {
             case 0:
-            basic.showLeds(`
+                basic.showLeds(`
             . . . . .
             . . . . .
             . . . . .
             . . . . .
             . . . . .
             `)
-            break;
+                break;
 
             case 1:
                 basic.showIcon(IconNames.Heart);
                 break;
-            
+
             case 2:
                 basic.showIcon(IconNames.Yes);
                 break;
-            
+
             case 3:
                 basic.showIcon(IconNames.No);
                 break;
-            
+
             case 4:
                 basic.showIcon(IconNames.Happy)
                 break;
-            
+
             case 5:
                 basic.showIcon(IconNames.Sad)
                 break;
-            
+
             case 6:
                 basic.showIcon(IconNames.Angry)
                 break;
-            
+
             case 7:
-            basic.showLeds(`
+                basic.showLeds(`
             . . # . .
             . # # # .
             # . # . #
             . . # . .
             . . # . .
             `)
-            break;
-            
+                break;
+
             case 8:
-            basic.showLeds(`
+                basic.showLeds(`
             . . # . .
             . . # . .
             # . # . #
             . # # # .
             . . # . .
             `)
-            break;
-            
+                break;
+
             case 9:
-            basic.showLeds(`
+                basic.showLeds(`
             . . # . .
             . # . . .
             # # # # #
@@ -822,9 +814,9 @@ namespace qdee {
             . . # . .
             `)
                 break;
-            
+
             case 10:
-            basic.showLeds(`
+                basic.showLeds(`
             . . # . .
             . . . # .
             # # # # #
@@ -832,10 +824,10 @@ namespace qdee {
             . . # . .
             `)
                 break;
-            
+
         }
     }
-    
+
     /**
      * Do someting when Qdee receive custom ir code
      * @param address the message id
@@ -878,8 +870,8 @@ namespace qdee {
     //% subcategory=IR
     export function onQdee_remote_ir_pressed(code: IRKEY, body: Action) {
         control.onEvent(MESSAGE_HEAD, code, body);
-}
-    
+    }
+
     /**
      * Do someting when remote-control longpress
      * @param code the ir key button that needs to be pressed
@@ -1272,8 +1264,8 @@ namespace qdee {
         i2cwrite(APDS9960_ENABLE, val);
     }
     /**
-	 *  Color sensor return the color.
-	 */
+     *  Color sensor return the color.
+     */
     //% weight=62 blockId=qdee_checkCurrentColor block="Current color %color"
     //% subcategory=Sensor
     export function qdee_checkCurrentColor(color: qdee_Colors): boolean {
@@ -1316,8 +1308,8 @@ namespace qdee {
 
 
     /**
-	 *  Color sensor return the color.
-	 */
+     *  Color sensor return the color.
+     */
     //% weight=60 blockId=qdee_get_color block="color %color value(0~255)"
     //% subcategory=Sensor
     export function qdee_get_color(color: qdee_RGBValue): number {
@@ -1337,16 +1329,15 @@ namespace qdee {
         g = Math.round(mapRGB(g, 0, green_wb, 0, 255));
         b = Math.round(mapRGB(b, 0, blue_wb, 0, 255));
 
-        switch (color)
-        {
+        switch (color) {
             case qdee_RGBValue.Red:
                 value = r;
                 break;
-            
+
             case qdee_RGBValue.Green:
                 value = g;
                 break;
-            
+
             case qdee_RGBValue.Blue:
                 value = b;
                 break;
@@ -1389,7 +1380,7 @@ namespace qdee {
      * Get the line follower sensor port ad value
      */
     //% weight=56 blockId=qdee_lineSensorValue block="Get line follower sensor|port %port|%sensor|ad value"
-   //% subcategory=Sensor
+    //% subcategory=Sensor
     export function qdee_lineSensorValue(port: lineFollowPort, sensor: LineFollowerSensor): number {
         let s1 = 0;
         let s2 = 0;
@@ -1447,63 +1438,34 @@ namespace qdee {
         let echoPin: DigitalPin = DigitalPin.P2;
         let distance: number = 0;
         let d: number = 0;
-        if (versionNum == -1)//没有读取到版本号
-        {
-            switch (port) {
-                case ultrasonicPort.port1:
-                    trigPin = DigitalPin.P1;
-                    break;
-                case ultrasonicPort.port2:
-                    trigPin = DigitalPin.P13;
-                    break;
-            }
-            pins.setPull(trigPin, PinPullMode.PullNone);
-            pins.digitalWritePin(trigPin, 0);
-            control.waitMicros(2);
-            pins.digitalWritePin(trigPin, 1);
-            control.waitMicros(10);
-            pins.digitalWritePin(trigPin, 0);
-
-            d = pins.pulseIn(trigPin, PulseValue.High, 15000);
-            distance = d;
-            // filter timeout spikes
-            if (distance == 0 || distance >= 13920) {
-                distance = distanceBak;
-            }
-            else
-                distanceBak = d;
-
+        switch (port) {
+            case ultrasonicPort.port1:
+                trigPin = DigitalPin.P1;
+                echoPin = DigitalPin.P2;
+                break;
+            case ultrasonicPort.port2:
+                trigPin = DigitalPin.P13;
+                echoPin = DigitalPin.P14;
+                break;
         }
-        else {
-            switch (port) {
-                case ultrasonicPort.port1:
-                    trigPin = DigitalPin.P1;
-                    echoPin = DigitalPin.P2;
-                    break;
-                case ultrasonicPort.port2:
-                    trigPin = DigitalPin.P13;
-                    echoPin = DigitalPin.P14;
-                    break;
-            }
-            pins.setPull(echoPin, PinPullMode.PullNone);
-            pins.setPull(trigPin, PinPullMode.PullNone);
+        pins.setPull(echoPin, PinPullMode.PullNone);
+        pins.setPull(trigPin, PinPullMode.PullNone);
 
-            // send pulse
-            pins.digitalWritePin(trigPin, 0);
-            control.waitMicros(2);
-            pins.digitalWritePin(trigPin, 1);
-            control.waitMicros(10);
-            pins.digitalWritePin(trigPin, 0);
-            // read pulse
-            d = pins.pulseIn(echoPin, PulseValue.High, 15000);
-            distance = d;
-            // filter timeout spikes
-            if (distance == 0 || distance >= 13920) {
-                distance = distanceBak;
-            }
-            else
-                distanceBak = d;
+        // send pulse
+        pins.digitalWritePin(trigPin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(trigPin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(trigPin, 0);
+        // read pulse
+        d = pins.pulseIn(echoPin, PulseValue.High, 15000);
+        distance = d;
+        // filter timeout spikes
+        if (distance == 0 || distance >= 13920) {
+            distance = distanceBak;
         }
+        else
+            distanceBak = d;
 
         return Math.round(distance * 10 / 6 / 58);
     }
@@ -1529,7 +1491,7 @@ namespace qdee {
         }
         return Math.round(adValue);
     }
-    
+
     /**
      * Set extension pins output high/low
      */
@@ -1633,7 +1595,7 @@ namespace qdee {
         return type;
     }
 
-   
+
     /**
       * The distance from the ultrasonic obstacle to the standard command, which is sent to the mobile phone. The APP will indicate the distance of the ultrasonic obstacle.
       */
@@ -1692,10 +1654,10 @@ namespace qdee {
         cmdStr += "|$";
         return cmdStr;
     }
-    
+
     /**
-	 * Initialize RGB
-	 */
+     * Initialize RGB
+     */
     //% blockId="qdee_initRGBLight" block="Initialize RGB led"
     //% weight=31
     //% subcategory=Coloured_lights
@@ -1716,7 +1678,7 @@ namespace qdee {
     export function qdee_setBrightness(brightness: number): void {
         lhRGBLight.setBrightness(brightness);
     }
-    
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
@@ -1725,7 +1687,7 @@ namespace qdee {
     export function qdee_setPixelRGB(lightoffset: QdeeLights, rgb: QdeeRGBColors) {
         lhRGBLight.setPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Set RGB Color argument
      */
@@ -1761,7 +1723,7 @@ namespace qdee {
     export function qdee_belt_setPixelRGB(lightoffset: QdeeLightsBelt, rgb: QdeeRGBColors) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
     }
-     
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
@@ -1770,7 +1732,7 @@ namespace qdee {
     export function qdee_belt_setPixelRGBIndex(lightoffset: QdeeLightsBelt, rgb: number) {
         lhRGBLightBelt.setBeltPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
@@ -1780,7 +1742,7 @@ namespace qdee {
     export function qdee_belt_setPixelRGBSingle(lightoffset: number, rgb: QdeeRGBColors) {
         lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
     }
-     
+
     /**
      * Set the color of the colored lights, after finished the setting please perform  the display of colored lights.
      */
@@ -1790,7 +1752,7 @@ namespace qdee {
     export function qdee_belt_setPixelRGBSingleRGBIndex(lightoffset: number, rgb: number) {
         lhRGBLightBelt.singleSetBeltPixelColor(lightoffset, rgb);
     }
-    
+
     /**
      * Display the colored lights, and set the color of the colored lights to match the use. After setting the color of the colored lights, the color of the lights must be displayed.
      */
