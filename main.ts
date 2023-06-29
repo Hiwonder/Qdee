@@ -619,6 +619,7 @@ namespace qdee {
         buf[8] = position & 0xff;
         buf[9] = (position >> 8) & 0xff;
         serial.writeBuffer(buf);
+        basic.pause(10);
     }
 
     /**
