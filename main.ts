@@ -293,8 +293,8 @@ namespace qdee {
             basic.pause(30)
         }
         basic.pause(1500);
-        qdee_setBusServo(busServoPort.port10, 0, 0, 100)
         initExtPins();
+        qdee_setBusServo(busServoPort.port10, 0, 0, 0)
     }
 
     /**
